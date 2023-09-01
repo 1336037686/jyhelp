@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jyadmin.system.user.mapper.UserMapper">
+
+    <resultMap id="BaseResultMap" type="com.jyadmin.system.user.domain.User">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="username" column="username" jdbcType="VARCHAR"/>
+            <result property="password" column="password" jdbcType="VARCHAR"/>
+            <result property="nickname" column="nickname" jdbcType="VARCHAR"/>
+            <result property="avatar" column="avatar" jdbcType="VARCHAR"/>
+            <result property="phone" column="phone" jdbcType="VARCHAR"/>
+            <result property="type" column="type" jdbcType="INTEGER"/>
+            <result property="status" column="status" jdbcType="INTEGER"/>
+            <result property="createBy" column="create_by" jdbcType="BIGINT"/>
+            <result property="updateBy" column="update_by" jdbcType="BIGINT"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+            <result property="deleted" column="deleted" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <resultMap id="FullResultMap" type="com.jyadmin.system.user.model.dto.UserDTO">
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="username" column="username" jdbcType="VARCHAR"/>
+        <result property="password" column="password" jdbcType="VARCHAR"/>
+        <result property="nickname" column="nickname" jdbcType="VARCHAR"/>
+        <result property="avatar" column="avatar" jdbcType="VARCHAR"/>
+        <result property="phone" column="phone" jdbcType="VARCHAR"/>
+        <result property="type" column="type" jdbcType="INTEGER"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="createBy" column="create_by" jdbcType="BIGINT"/>
+        <result property="updateBy" column="update_by" jdbcType="BIGINT"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="deleted" column="deleted" jdbcType="INTEGER"/>
+        <result property="departmentName" column="department_name" jdbcType="VARCHAR"/>
+        <result property="postName" column="post_name" jdbcType="VARCHAR"/>
+        <collection property="roleNames" column="id" select="com.jyadmin.system.user.mapper.UserMapper.selectRoleNamesByUserId" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,username,password,
+        nickname,avatar,phone,
+        type,status,create_by,
+        update_by,create_time,update_time,
+        deleted
+    </sql>
+
+    <select id="selectRoleNamesByUserId" resultType="java.lang.String">
+        SELECT
+            sr.name
+        FROM sys_user su
+        INNER JOIN tr_user_role tur ON su.ID = tur.user_id
+        INNER JOIN sys_role sr ON sr.ID = tur.role_id
+        WHERE tur.deleted = 0 and sr.`status` = 1 AND sr.deleted = 0 and su.`status` = 1 and su.deleted = 0 and su.id = #{userId}
+    </select>
+
+    <select id="selectUserPage" resultMap="FullResultMap">
+        SELECT * FROM (
+              SELECT
+                  su.*, sd.`name` AS "department_name", sp.`name` AS "post_name"
+              FROM sys_user su
+              LEFT JOIN sys_department sd ON su.department = sd.id AND sd.deleted = 0
+              LEFT JOIN sys_post sp ON sp.id = su.post AND sp.deleted = 0
+        ) t ${ew.customSqlSegment}
+    </select>
+
+    <select id="selectUserDetailById" resultMap="FullResultMap">
+        SELECT
+            su.*, sd.`name` AS "department_name", sp.`name` AS "post_name"
+        FROM sys_user su
+        LEFT JOIN sys_department sd ON su.department = sd.id AND sd.deleted = 0
+        LEFT JOIN sys_post sp ON sp.id = su.post AND sp.deleted = 0
+        WHERE su.ID = #{userId}
+    </select>
+</mapper>

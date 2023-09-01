@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jyadmin.security.mapper.AuthMapper">
+
+    <resultMap id="BaseResultMap" type="com.jyadmin.security.domain.User">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="username" column="username" jdbcType="VARCHAR"/>
+            <result property="password" column="password" jdbcType="VARCHAR"/>
+            <result property="nickname" column="nickname" jdbcType="VARCHAR"/>
+            <result property="avatar" column="avatar" jdbcType="VARCHAR"/>
+            <result property="phone" column="phone" jdbcType="VARCHAR"/>
+            <result property="type" column="type" jdbcType="INTEGER"/>
+            <result property="status" column="status" jdbcType="INTEGER"/>
+            <result property="createBy" column="create_by" jdbcType="BIGINT"/>
+            <result property="updateBy" column="update_by" jdbcType="BIGINT"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+            <result property="deleted" column="deleted" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,username,password,
+        nickname,avatar,phone,
+        type,status,create_by,
+        update_by,create_time,update_time,
+        deleted
+    </sql>
+
+    <select id="selectAllPermissions" resultType="com.jyadmin.security.domain.PermissionAction">
+        select
+            spa.id, spa.name, spa.code, spa.description, spa.group_id "groupId", spa.sort,
+            spa.status, spa.create_by "createBy", spa.update_by "updateBy",
+            spa.create_time "createTime", spa.update_time "updateTime", spa.deleted
+        from sys_permission_action spa
+        where spa.deleted = 0 and spa.status = 1
+    </select>
+
+    <select id="selectPermissionsByUserId" resultType="com.jyadmin.security.domain.PermissionAction">
+        SELECT
+            DISTINCT spa.id, spa.name, spa.code, spa.description, spa.group_id "groupId", spa.sort,
+            spa.status, spa.create_by "createBy", spa.update_by "updateBy",
+            spa.create_time "createTime", spa.update_time "updateTime", spa.deleted
+        FROM tr_user_role tur
+        INNER JOIN tr_permission_role_menu tprm on tur.role_id  = tprm.role_id
+        INNER JOIN tr_permission_menu_action tpma on tprm.menu_id = tpma.menu_id
+        INNER JOIN sys_permission_action spa on spa.id = tpma.action_id
+        WHERE tur.deleted = 0 and tprm.deleted = 0 and tpma.deleted = 0 and tur.user_id = #{userId} and spa.deleted = 0 and spa.status = 1
+    </select>
+
+    <select id="selectMenus" resultType="java.util.Map">
+        SELECT
+            DISTINCT spm.id, spm.name, spm.code,spm.type, spm.description, spm.parent_id "parentId", spm.url, spm.path, spm.method, spm.icon,
+            spm.style, spm.sort, spm.cache,spm.visiable, spm.link, spm.status, spm.component
+        FROM tr_user_role tur
+        INNER JOIN tr_permission_role_menu tprm ON tur.role_id  = tprm.role_id
+        INNER JOIN sys_permission_menu spm ON spm.id = tprm.menu_id
+        WHERE tur.deleted = 0 and tprm.deleted = 0 and tur.user_id = #{userId} AND spm.deleted = 0 AND spm.status = 1
+        ORDER BY spm.sort
+    </select>
+
+    <select id="selectRoles" resultType="java.util.Map">
+        select
+               DISTINCT sr.id, sr.name, sr.code, sr.description,
+               sr.sort, sr.status
+        FROM tr_user_role tur
+        INNER JOIN sys_role sr ON sr.id = tur.role_id
+        WHERE tur.deleted = 0 and sr.status = 1 AND sr.deleted = 0 AND tur.user_id = #{userId}
+    </select>
+
+    <select id="selectApiPermissionByUserId" resultType="java.lang.String">
+        SELECT
+            DISTINCT sr.api_permission
+        FROM sys_user su
+        INNER JOIN tr_user_role tur ON tur.user_id = su.id
+        INNER JOIN sys_role sr ON sr.id = tur.role_id
+        WHERE tur.deleted = 0 and su.`status` = 1 AND su.deleted = 0 AND sr.deleted = 0 and sr.`status` = 1 and su.id = #{userId}
+    </select>
+
+    <select id="selectRoleByCode" resultType="java.lang.Long">
+        SELECT ID FROM sys_role where deleted = '0' and `code` = #{roleCode} LIMIT 1
+    </select>
+
+
+</mapper>

@@ -1,0 +1,151 @@
+<template>
+  <el-dialog
+    :title="title"
+    :visible.sync="tmpVisible"
+    :close-on-press-escape="false"
+    :close-on-click-modal="false"
+    :show-close="false"
+    width="30%"
+  >
+    <div>
+      <el-form ref="form" :rules="rules" :model="form" label-width="80px">
+#foreach($field in $fields)
+  #if($field.fieldIgnore == 0)
+    #if($field.showForm == 1)
+      <el-form-item label="${field.fieldRemark}" prop="${field.realFieldNameLowCamelCase}">
+        <el-input v-model="form.${field.realFieldNameLowCamelCase}" />
+      </el-form-item>
+    #end
+  #end
+#end
+      </el-form>
+    </div>
+    <span slot="footer" class="dialog-footer">
+      <el-button @click="resetForm('form')">取 消</el-button>
+      <el-button type="primary" @click="handleSubmit('form')">确 定</el-button>
+    </span>
+  </el-dialog>
+</template>
+
+<script>
+import ${realTableNameLowCamelCase}Api from '@/api/module/${pageViewPath}/${realTableNameLowCamelCase}-api'
+export default {
+  name: '${realTableNameLowCamelCase}Form',
+  props: {
+    title: {
+      type: String,
+      default: 'Demo'
+    },
+    id: {
+      type: String,
+      default: null
+    },
+    visible: {
+      type: Boolean,
+      default: false
+    }
+  },
+  data() {
+    return {
+      tmpVisible: this.visible,
+      type: 'insert',
+      form: {
+        id: null,
+  #foreach($field in $fields)
+    #if($field.fieldIgnore == 0)
+      #if($field.showForm == 1)
+      #if($foreach.last)
+          ${field.realFieldNameLowCamelCase}: null
+      #else
+          ${field.realFieldNameLowCamelCase}: null,
+      #end
+      #end
+    #end
+  #end
+      },
+      rules: {
+  #foreach($field in $fields)
+    #if($field.fieldIgnore == 0)
+      #if($field.showForm == 1)
+      #if($foreach.last)
+          ${field.realFieldNameLowCamelCase}: [
+          { required: true, message: '请输入${field.fieldRemark}', trigger: 'blur' }
+        ]
+      #else
+          ${field.realFieldNameLowCamelCase}: [
+          { required: true, message: '请输入${field.fieldRemark}', trigger: 'blur' }
+        ],
+      #end
+      #end
+    #end
+  #end
+      }
+    }
+  },
+  watch: {
+    visible(newVal) {
+      this.tmpVisible = newVal
+      if (newVal) {
+        // 如果有ID则为修改操作
+        if (this.id) {
+          this.type = 'update'
+          this.getById(this.id)
+        } else {
+        // 否则为新增操作
+          this.type = 'insert'
+        }
+      }
+    },
+    tmpVisible(newVal) {
+      this.$emit('update:visible', newVal)
+    },
+    deep: true
+  },
+  methods: {
+    handleSubmit(formName) {
+      #set($VUE_HANDLE_SUBMIT_FUN_PARAMS_FORMNAME='[formName]')
+      this.$refs${VUE_HANDLE_SUBMIT_FUN_PARAMS_FORMNAME}.validate((valid) => {
+        if (valid) {
+          if (this.type === 'insert') this.handleCreate()
+          else this.handleUpdate()
+        }
+      })
+    },
+    handleCreate() {
+      ${realTableNameLowCamelCase}Api.add(this.form).then(response => {
+        this.$notify.success({ title: '成功', message: '添加成功' })
+        this.$parent.getList()
+        this.tmpVisible = false
+
+        this.resetForm('form')
+        this.form.id = null
+      })
+    },
+    handleUpdate() {
+      ${realTableNameLowCamelCase}Api.update(this.form).then(response => {
+        this.$notify.success({ title: '成功', message: '修改成功' })
+        this.$parent.getList()
+        this.tmpVisible = false
+
+        this.resetForm('form')
+        this.form.id = null
+      })
+    },
+    getById(id) {
+      ${realTableNameLowCamelCase}Api.getById(id).then(response => {
+        this.form = response.data
+      })
+    },
+    resetForm(formName) {
+      this.form.id = null
+      #set($VUE_RESET_FORM_FUN_PARAMS_FORMNAME='[formName]')
+      this.$refs${VUE_RESET_FORM_FUN_PARAMS_FORMNAME}.resetFields()
+      this.tmpVisible = false
+    }
+  }
+}
+</script>
+
+<style scoped>
+
+</style>

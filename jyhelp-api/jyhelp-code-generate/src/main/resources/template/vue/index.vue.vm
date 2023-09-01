@@ -1,0 +1,207 @@
+<template>
+  <div style="margin: 10px">
+    <el-card class="box-card" shadow="always">
+      <el-form :inline="true" v-show="queryFormVisiable" size="mini"  :model="queryForm" label-width="100px">
+  #foreach($field in $fields)
+    #if($field.fieldIgnore == 0)
+      #if($field.showQuery == 1)
+        <el-form-item label="${field.fieldRemark}：">
+          <el-input v-model="queryForm.${field.realFieldNameLowCamelCase}" placeholder="${field.fieldRemark}" />
+        </el-form-item>
+      #end
+    #end
+  #end
+        <el-form-item>
+          <el-button type="primary" icon="el-icon-search" @click="handleQuery">查 询</el-button>
+          <el-button type="info" icon="el-icon-circle-close" @click="handleReset">重 置</el-button>
+        </el-form-item>
+      </el-form>
+      <div style="margin-top: 5px">
+        <el-button type="primary" icon="el-icon-view" size="mini" @click="handleShow">查 看</el-button>
+        <el-button type="success" icon="el-icon-plus" size="mini" @click="handleCreate">新 增</el-button>
+        <el-button type="warning" icon="el-icon-edit-outline" size="mini" @click="handleUpdate">修 改</el-button>
+        <el-button type="danger" icon="el-icon-delete" size="mini" @click="handleRemove">删 除</el-button>
+      </div>
+    </el-card>
+
+    <el-card class="box-card" shadow="always" style="margin-top: 5px">
+      <div slot="header" class="clearfix">
+        <span><i class="el-icon-caret-right" /> ${tableRemark}记录</span>
+        <el-row style="float: right">
+          <el-button icon="el-icon-search" circle size="mini" @click="() => this.queryFormVisiable = !this.queryFormVisiable" />
+          <el-button icon="el-icon-refresh" circle size="mini" @click="handleQuery()" />
+        </el-row>
+      </div>
+      <el-table
+        ref="table"
+        v-loading="tableData.loading"
+        element-loading-text="加载中，请稍后..."
+        element-loading-spinner="el-icon-loading"
+        :data="tableData.records"
+        highlight-current-row
+        style="width: 100%"
+        empty-text="暂无数据"
+        :header-cell-style="{background:'#FAFAFA'}"
+        @row-click="handleTableRowClick"
+      >
+        <el-table-column type="selection" width="55" align="center" />
+        <el-table-column type="index" width="80" label="序号" align="center" />
+  #foreach($field in $fields)
+    #if($field.fieldIgnore == 0)
+      #if($field.showPage == 1)
+        <el-table-column prop="${field.realFieldNameLowCamelCase}" label="${field.fieldRemark}" align="center" show-overflow-tooltip />
+      #end
+    #end
+  #end
+      </el-table>
+    </el-card>
+
+    <div style="text-align: center;margin-top: 10px">
+      <el-pagination
+        v-model="tableData.pageNumber"
+        background
+        layout="prev, pager, next"
+        :page-size="tableData.pageSize"
+        :hide-on-single-page="true"
+        :total="tableData.total"
+        @current-change="handleChangePage"
+      />
+    </div>
+
+    <${realTableNameUpperCamelCase}Form :id="editData.id" :title="editData.title" :visible.sync="editData.visiable" />
+    <${realTableNameUpperCamelCase}Detail :id="showData.id" :title="showData.title" :visible.sync="showData.visiable" />
+  </div>
+</template>
+
+<script>
+import ${realTableNameLowCamelCase}Api from '@/api/module/${pageViewPath}/${realTableNameLowCamelCase}-api'
+import ${realTableNameUpperCamelCase}Form from '@/views/module/${pageViewPath}/${realTableNameLowCamelCase}-form'
+import ${realTableNameUpperCamelCase}Detail from '@/views/module/${pageViewPath}/${realTableNameLowCamelCase}-detail'
+export default {
+  components: { ${realTableNameUpperCamelCase}Detail, ${realTableNameUpperCamelCase}Form },
+  data() {
+    return {
+      queryFormVisiable: true,
+      queryForm: {
+#foreach($field in $fields)
+  #if($field.fieldIgnore == 0)
+    #if($field.showQuery == 1)
+    #if($foreach.last)
+        ${field.realFieldNameLowCamelCase}: null
+    #else
+        ${field.realFieldNameLowCamelCase}: null,
+    #end
+    #end
+  #end
+#end
+      },
+      tableData: {
+        loading: false,
+        pageNumber: 1,
+        pageSize: 10,
+        pages: 1,
+        total: 1,
+        records: [],
+        hasPrevious: false,
+        hasNext: false
+      },
+      editData: {
+        visiable: false,
+        title: '',
+        id: null
+      },
+      showData: {
+        visiable: false,
+        title: '',
+        id: null
+      },
+      selectData: {
+        current: null,
+        record: []
+      }
+    }
+  },
+  created() {
+    this.getList()
+  },
+  methods: {
+    getList() {
+      this.tableData.loading = true
+      const queryForm = { ...this.queryForm, pageNumber: this.tableData.pageNumber, pageSize: this.tableData.pageSize }
+        ${realTableNameLowCamelCase}Api.getList(queryForm).then(response => {
+        this.tableData.loading = false
+        this.tableData = response
+      })
+    },
+    handleQuery() {
+      this.tableData.pageNumber = 1
+      this.getList()
+    },
+    handleReset() {
+#foreach($field in $fields)
+#if($field.fieldIgnore == 0)
+  #if($field.showQuery == 1)
+      this.queryForm.${field.realFieldNameLowCamelCase} = null
+  #end
+#end
+#end
+      this.tableData.pageNumber = 1
+      this.getList()
+    },
+    handleShow() {
+      if (!this.selectData.current) {
+        this.$notify.warning({ title: '警告', message: '请先选择一条数据' })
+        return
+      }
+      this.showData.title = '查看${field.fieldRemark}'
+      this.showData.id = this.selectData.current.id
+      this.showData.visiable = true
+    },
+    handleCreate() {
+      this.editData.title = '新增${field.fieldRemark}'
+      this.editData.id = null
+      this.editData.visiable = true
+    },
+    handleUpdate() {
+      if (!this.selectData.current) {
+        this.$notify.warning({ title: '警告', message: '请先选择一条数据' })
+        return
+      }
+      this.editData.title = '修改${field.fieldRemark}'
+      this.editData.id = this.selectData.current.id
+      this.editData.visiable = true
+    },
+    handleRemove() {
+      const selectRows = this.$refs.table.selection
+      if (!selectRows || selectRows.length === 0) {
+        this.$notify.warning({ title: '警告', message: '请先选择一条数据' })
+        return
+      }
+      this.$confirm('此操作将永久删除选中数据, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        const ids = []
+        #set($VUE_HANDLE_REMOVE_FUN_PARAMS_I='[i]')
+        for (let i = 0; i < this.$refs.table.selection.length; i++) ids.push(this.$refs.table.selection${VUE_HANDLE_REMOVE_FUN_PARAMS_I}.id)
+          ${realTableNameLowCamelCase}Api.remove(ids).then(response => {
+          this.getList()
+          this.$notify.success({ title: '成功', message: '删除成功' })
+        })
+      })
+    },
+    handleTableRowClick(row, column, event) {
+      this.selectData.current = row
+      this.$refs.table.toggleRowSelection(row)
+    },
+    handleChangePage(page) {
+      this.tableData.pageNumber = page
+      this.getList()
+    }
+  }
+}
+</script>
+<style scoped>
+
+</style>
