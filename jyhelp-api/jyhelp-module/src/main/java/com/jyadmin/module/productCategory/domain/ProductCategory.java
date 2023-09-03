@@ -1,9 +1,6 @@
 package com.jyadmin.module.productCategory.domain;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import com.jyadmin.domain.base.BaseEntity;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -59,6 +56,7 @@ public class ProductCategory extends BaseEntity implements Serializable {
      * 版本
      */
     @TableField(value = "version")
+    @Version
     private Long version;
 
     @TableField(exist = false)
