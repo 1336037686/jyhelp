@@ -68,7 +68,6 @@ public class FileProcessController {
         return Result.ok(result);
     }
 
-    @Log(title = "附件处理：文件下载", desc = "文件下载")
     @ApiOperation(value = "文件下载", notes = "")
     @GetMapping("download/{id}")
     public Result<Object> doDownload(@PathVariable("id") String id, HttpServletResponse response) {
