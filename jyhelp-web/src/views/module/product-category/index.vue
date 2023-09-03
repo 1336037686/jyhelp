@@ -8,10 +8,13 @@
     <el-card class="box-card" shadow="always">
       <el-form v-show="queryFormVisiable" :inline="true" size="mini" :model="queryForm" label-width="100px">
         <el-form-item label="类别名称：">
-          <el-input v-model="queryForm.name" placeholder="类别名称" />
+          <el-input v-model="queryForm.name" placeholder="名称" />
         </el-form-item>
-        <el-form-item label="类别编码：">
-          <el-input v-model="queryForm.code" placeholder="类别编码" />
+        <el-form-item label="类别编号：">
+          <el-input v-model="queryForm.code" placeholder="编号" />
+        </el-form-item>
+        <el-form-item label="是否启用：">
+          <el-input v-model="queryForm.status" placeholder="是否启用" />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" icon="el-icon-search" @click="handleQuery">查 询</el-button>
@@ -23,16 +26,16 @@
         <el-button type="success" icon="el-icon-plus" size="mini" @click="handleCreate">新 增</el-button>
         <el-button type="warning" icon="el-icon-edit-outline" size="mini" @click="handleUpdate">修 改</el-button>
         <el-button type="danger" icon="el-icon-delete" size="mini" @click="handleRemove">删 除</el-button>
-        <el-button type="purple" icon="el-icon-share" size="mini" @click="handleReport">导 出</el-button>
       </div>
     </el-card>
 
     <el-card class="box-card" shadow="always" style="margin-top: 5px">
       <div slot="header" class="clearfix">
-        <span><i class="el-icon-caret-right" /> 博客类别记录</span>
+        <span><i class="el-icon-caret-right" /> 商品类别记录</span>
         <el-row style="float: right">
           <el-button icon="el-icon-search" circle size="mini" @click="() => this.queryFormVisiable = !this.queryFormVisiable" />
           <el-button icon="el-icon-refresh" circle size="mini" @click="handleQuery()" />
+          <el-button icon="el-icon-s-grid" circle size="mini" @click="selectColumns()" />
         </el-row>
       </div>
       <el-table
@@ -49,44 +52,51 @@
       >
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column type="index" width="80" label="序号" align="center" />
-        <el-table-column prop="name" label="类别名称" align="center" />
-        <el-table-column prop="code" label="类别编码" align="center" />
-        <el-table-column prop="createTime" label="创建时间" align="center" />
-        <el-table-column prop="intro" label="类别简介" width="600" align="center" />
+        <el-table-column v-if="checkColumnDisplayed('name', columnsData.columns)" prop="name" label="类别名称" align="center" show-overflow-tooltip />
+        <el-table-column v-if="checkColumnDisplayed('code', columnsData.columns)" prop="code" label="类别编号" align="center" show-overflow-tooltip />
+        <el-table-column v-if="checkColumnDisplayed('icon', columnsData.columns)" prop="icon" label="类别图标" align="center" show-overflow-tooltip />
+        <el-table-column v-if="checkColumnDisplayed('status', columnsData.columns)" prop="status" label="是否启用" align="center" show-overflow-tooltip>
+          <template slot-scope="scope">
+            <el-tag v-if="scope.row.status === 1" size="mini" effect="plain" type="success"> <i class="el-icon-success" /> 启 用</el-tag>
+            <el-tag v-if="scope.row.status === 0" size="mini" effect="plain" type="danger"> <i class="el-icon-error" /> 禁 用</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column v-if="checkColumnDisplayed('description', columnsData.columns)" prop="description" label="描述" align="center" show-overflow-tooltip />
       </el-table>
+      <div style="text-align: center;margin-top: 10px">
+        <el-pagination
+          v-model="tableData.pageNumber"
+          background
+          layout="prev, pager, next"
+          :page-size="tableData.pageSize"
+          :hide-on-single-page="true"
+          :total="tableData.total"
+          @current-change="handleChangePage"
+        />
+      </div>
     </el-card>
 
-    <div style="text-align: center;margin-top: 10px">
-      <el-pagination
-        v-model="tableData.pageNumber"
-        background
-        layout="prev, pager, next"
-        :page-size="tableData.pageSize"
-        :hide-on-single-page="true"
-        :total="tableData.total"
-        @current-change="handleChangePage"
-      />
-    </div>
-
-    <jy-category-form :id="editData.id" :title="editData.title" :visible.sync="editData.visiable" />
-    <jy-category-detail :id="showData.id" :title="showData.title" :visible.sync="showData.visiable" />
+    <ProductCategoryForm :id="editData.id" :title="editData.title" :visible.sync="editData.visiable" />
+    <ProductCategoryDetail :id="showData.id" :title="showData.title" :visible.sync="showData.visiable" />
+    <select-columns :title="columnsData.title" :columns="columnsData.columns" :visible.sync="columnsData.visiable" />
   </div>
 </template>
 
 <script>
-import jyCategoryApi from '@/api/module/category/category-api'
-import JyCategoryForm from '@/views/module/blog/category/category-form'
-import JyCategoryDetail from '@/views/module/blog/category/category-detail'
-import parseResponseContentDisposition from '@/utils/response'
+import productCategoryApi from '@/api/module/product-category/product-category-api'
+import ProductCategoryForm from '@/views/module/product-category/product-category-form'
+import ProductCategoryDetail from '@/views/module/product-category/product-category-detail'
+import SelectColumns from '@/components/SelectColumns'
 export default {
-  components: { JyCategoryDetail, JyCategoryForm },
+  components: { SelectColumns, ProductCategoryDetail, ProductCategoryForm },
   data() {
     return {
-      queryFormVisiable: true,
       deleteLoading: false,
+      queryFormVisiable: true,
       queryForm: {
-        name: '',
-        code: ''
+        name: null,
+        code: null,
+        status: null
       },
       tableData: {
         loading: false,
@@ -111,6 +121,16 @@ export default {
       selectData: {
         current: null,
         record: []
+      },
+      columnsData: {
+        visiable: false,
+        columns: [
+          { key: 'name', label: '类别名称', _showed: true },
+          { key: 'code', label: '类别编号', _showed: true },
+          { key: 'icon', label: '类别图标', _showed: true },
+          { key: 'status', label: '是否启用', _showed: true },
+          { key: 'description', label: '描述', _showed: true }
+        ]
       }
     }
   },
@@ -121,18 +141,22 @@ export default {
     getList() {
       this.tableData.loading = true
       const queryForm = { ...this.queryForm, pageNumber: this.tableData.pageNumber, pageSize: this.tableData.pageSize }
-      jyCategoryApi.getList(queryForm).then(response => {
+      productCategoryApi.getList(queryForm).then(response => {
         this.tableData.loading = false
         this.tableData = response
       })
+    },
+    selectColumns() {
+      this.columnsData.visiable = true
     },
     handleQuery() {
       this.tableData.pageNumber = 1
       this.getList()
     },
     handleReset() {
-      this.queryForm.name = ''
-      this.queryForm.code = ''
+      this.queryForm.name = null
+      this.queryForm.code = null
+      this.queryForm.status = null
       this.tableData.pageNumber = 1
       this.getList()
     },
@@ -141,12 +165,12 @@ export default {
         this.$notify.warning({ title: '警告', message: '请先选择一条数据' })
         return
       }
-      this.showData.title = '查看类别'
+      this.showData.title = '查看'
       this.showData.id = this.selectData.current.id
       this.showData.visiable = true
     },
     handleCreate() {
-      this.editData.title = '新增类别'
+      this.editData.title = '新增'
       this.editData.id = null
       this.editData.visiable = true
     },
@@ -155,7 +179,7 @@ export default {
         this.$notify.warning({ title: '警告', message: '请先选择一条数据' })
         return
       }
-      this.editData.title = '修改类别'
+      this.editData.title = '修改'
       this.editData.id = this.selectData.current.id
       this.editData.visiable = true
     },
@@ -174,30 +198,13 @@ export default {
         const ids = []
         for (let i = 0; i < this.$refs.table.selection.length; i++) ids.push(this.$refs.table.selection[i].id)
         this.deleteLoading = true
-        jyCategoryApi.remove(ids).then(response => {
+        productCategoryApi.remove(ids).then(response => {
           this.deleteLoading = false
           this.getList()
           this.$notify.success({ title: '成功', message: '删除成功' })
         }).catch(e => {
           this.deleteLoading = false
         })
-      })
-    },
-    handleReport() {
-      jyCategoryApi.dataExport(this.queryForm).then(res => {
-        // 获取响应头部信息
-        const contentDisposition = res.headers['content-disposition']
-        // 解析出文件名
-        const fileName = parseResponseContentDisposition(contentDisposition)
-        // 处理文件下载
-        const url = window.URL.createObjectURL(new Blob([res.data]))
-        const link = document.createElement('a')
-        link.href = url
-        link.setAttribute('download', fileName)
-        document.body.appendChild(link)
-        link.click()
-      }).catch(function(error) {
-        console.error(error)
       })
     },
     handleTableRowClick(row, column, event) {

@@ -16,21 +16,39 @@
       <el-descriptions :column="2" border>
         <el-descriptions-item>
           <template slot="label">
-            标签名称
+            ID
+          </template>
+          {{ form.id }}
+        </el-descriptions-item>
+        <el-descriptions-item>
+          <template slot="label">
+            名称
           </template>
           {{ form.name }}
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">
-            标签编码
+            编号
           </template>
           {{ form.code }}
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">
-            简介
+            图标
           </template>
-          {{ form.intro }}
+          {{ form.icon }}
+        </el-descriptions-item>
+        <el-descriptions-item>
+          <template slot="label">
+            描述
+          </template>
+          {{ form.description }}
+        </el-descriptions-item>
+        <el-descriptions-item>
+          <template slot="label">
+            是否启用
+          </template>
+          {{ form.status }}
         </el-descriptions-item>
       </el-descriptions>
     </div>
@@ -41,9 +59,9 @@
 </template>
 
 <script>
-import jyTagApi from '@/api/module/tag/tag-api'
+import productCategoryApi from '@/api/module/product-category/product-category-api'
 export default {
-  name: 'JyTagDetail',
+  name: 'ProductCategoryDetail',
   props: {
     title: {
       type: String,
@@ -60,13 +78,15 @@ export default {
   },
   data() {
     return {
-      initloading: false,
       tmpVisible: this.visible,
+      initloading: false,
       form: {
-        id: '',
-        name: '',
-        code: '',
-        intro: ''
+        id: null,
+        name: null,
+        code: null,
+        icon: null,
+        description: null,
+        status: null
       }
     }
   },
@@ -85,7 +105,7 @@ export default {
   methods: {
     getById(id) {
       this.initloading = true
-      jyTagApi.getById(id).then(response => {
+      productCategoryApi.getById(id).then(response => {
         this.initloading = false
         this.form = response.data
       }).catch(e => {

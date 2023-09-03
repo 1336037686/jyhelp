@@ -54,20 +54,18 @@
         <el-table-column prop="createTime" label="创建时间" align="center" />
         <el-table-column prop="intro" label="标签简介" align="center" width="600" />
       </el-table>
+      <div style="text-align: center;margin-top: 10px">
+        <el-pagination
+          v-model="tableData.pageNumber"
+          background
+          layout="prev, pager, next"
+          :page-size="tableData.pageSize"
+          :hide-on-single-page="true"
+          :total="tableData.total"
+          @current-change="handleChangePage"
+        />
+      </div>
     </el-card>
-
-    <div style="text-align: center;margin-top: 10px">
-      <el-pagination
-        v-model="tableData.pageNumber"
-        background
-        layout="prev, pager, next"
-        :page-size="tableData.pageSize"
-        :hide-on-single-page="true"
-        :total="tableData.total"
-        @current-change="handleChangePage"
-      />
-    </div>
-
     <jy-tag-form :id="editData.id" :title="editData.title" :idempotent-token="idempotentToken" :visible.sync="editData.visiable" />
     <jy-tag-detail :id="showData.id" :title="showData.title" :visible.sync="showData.visiable" />
   </div>
@@ -75,7 +73,7 @@
 
 <script>
 import { getIdempotentToken } from '@/api/system/auth/jy-auth'
-import jyTagApi from '@/api/module/jy-tag'
+import jyTagApi from '@/api/module/tag/tag-api'
 import JyTagForm from '@/views/module/blog/tag/tag-form'
 import JyTagDetail from '@/views/module/blog/tag/tag-detail'
 export default {
