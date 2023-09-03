@@ -25,16 +25,31 @@
           <el-input v-model="form.code" />
         </el-form-item>
         <el-form-item label="图标" prop="icon">
-          <el-input v-model="form.icon" />
-        </el-form-item>
-        <el-form-item label="描述" prop="description">
-          <el-input v-model="form.description" />
+          <el-upload
+            ref="fileUpload"
+            name="file"
+            :auto-upload="false"
+            list-type="picture-card"
+            accept="image/jpeg,image/jpg,image/png,image/gif"
+            action="Fake Action"
+            :limit="1"
+            :file-list="fileList"
+            :on-exceed="handleFileExceed"
+            :on-remove="handleFileRemove"
+            :on-change="handleFileUploadChange"
+            :http-request="handleFileUploadRequest"
+          >
+            <i class="el-icon-plus" />
+          </el-upload>
         </el-form-item>
         <el-form-item label="是否启用" prop="status">
           <el-radio-group v-model="form.status">
             <el-radio-button :label="0">禁用</el-radio-button>
             <el-radio-button :label="1">启用</el-radio-button>
           </el-radio-group>
+        </el-form-item>
+        <el-form-item label="描述" prop="description">
+          <el-input v-model="form.description" type="textarea" :rows="2" maxlength="200" />
         </el-form-item>
       </el-form>
     </div>
@@ -48,6 +63,8 @@
 <script>
 import { getIdempotentToken } from '@/api/system/auth/jy-auth'
 import productCategoryApi from '@/api/module/product-category/product-category-api'
+import fileProcessApi from '@/api/system/file/jy-file-process'
+import fileRecordApi from '@/api/system/file/jy-file-record'
 export default {
   name: 'ProductCategoryForm',
   props: {
@@ -98,11 +115,16 @@ export default {
         status: [
           { required: true, message: '请输入是否启用', trigger: 'blur' }
         ]
-      }
+      },
+      imgUrlPrefix: '/api/file-process/download/',
+      fileList: [],
+      fileDisabled: false
     }
   },
   watch: {
     async visible(newVal) {
+      this.fileList = []
+      this.fileDisabled = false
       this.tmpVisible = newVal
       if (newVal) {
         await this.getIdempotentToken()
@@ -167,11 +189,20 @@ export default {
         this.submitLoading = false
       })
     },
-    getById(id) {
+    async getById(id) {
       this.initloading = true
-      productCategoryApi.getById(id).then(response => {
-        this.initloading = false
+      await productCategoryApi.getById(id).then(response => {
         this.form = response.data
+      }).catch(e => {
+        this.initloading = false
+      })
+      if (this.form.icon === null) {
+        this.initloading = false
+        return
+      }
+      await fileRecordApi.getById(this.form.icon).then(response => {
+        this.initloading = false
+        this.fileList.push({ name: response.data.realName, url: this.imgUrlPrefix + response.data.id })
       }).catch(e => {
         this.initloading = false
       })
@@ -180,6 +211,45 @@ export default {
       this.form.id = null
       this.$refs[formName].resetFields()
       this.tmpVisible = false
+    },
+    handleFileExceed() {
+      this.$notify.warning({ title: '提示', message: '最多上传一张图片' })
+    },
+    handleFileRemove(file, fileList) {
+      this.form.icon = null
+    },
+    handleFileUploadChange(file, fileList) {
+      const isIMAGE = (file.raw.type === 'image/jpeg' || file.raw.type === 'image/png' || file.raw.type === 'image/gif')
+      const isLt1M = file.size / 1024 / 1024 < 1
+      if (!isIMAGE) {
+        this.$notify.error('上传文件只能是图片格式!')
+        fileList.splice(0, 1)
+        this.fileList = fileList
+        return false
+      }
+      if (!isLt1M) {
+        this.$notify.error('上传文件大小不能超过 1MB!')
+        fileList.splice(0, 1)
+        this.fileList = fileList
+        return false
+      }
+      this.fileList = fileList
+      // 上传文件
+      if (!this.fileList || this.fileList.length === 0) {
+        this.$notify.error('请选择上传文件!')
+        return
+      }
+      const relevance = 'product-category' // 测试模块
+      const formData = new FormData()
+      this.fileList.forEach(item => {
+        formData.append('file', item.raw)
+      })
+      fileProcessApi.upload(relevance, formData).then(res => {
+        this.form.icon = res.data.fileRecordId
+      })
+    },
+    handleFileUploadRequest() {
+      console.log('handleFileUploadRequest')
     }
   }
 }

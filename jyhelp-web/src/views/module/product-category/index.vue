@@ -14,7 +14,14 @@
           <el-input v-model="queryForm.code" placeholder="编号" />
         </el-form-item>
         <el-form-item label="是否启用：">
-          <el-input v-model="queryForm.status" placeholder="是否启用" />
+          <el-select v-model="queryForm.status" placeholder="请选择">
+            <el-option
+              v-for="item in statusOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" icon="el-icon-search" @click="handleQuery">查 询</el-button>
@@ -54,7 +61,11 @@
         <el-table-column type="index" width="80" label="序号" align="center" />
         <el-table-column v-if="checkColumnDisplayed('name', columnsData.columns)" prop="name" label="类别名称" align="center" show-overflow-tooltip />
         <el-table-column v-if="checkColumnDisplayed('code', columnsData.columns)" prop="code" label="类别编号" align="center" show-overflow-tooltip />
-        <el-table-column v-if="checkColumnDisplayed('icon', columnsData.columns)" prop="icon" label="类别图标" align="center" show-overflow-tooltip />
+        <el-table-column v-if="checkColumnDisplayed('icon', columnsData.columns)" prop="icon" label="类别图标" align="center" show-overflow-tooltip>
+          <template slot-scope="scope">
+            <el-avatar shape="square" size="large" :src="imgUrlPrefix + scope.row.icon" @click.native="handleIconClick(scope.row.icon)" />
+          </template>
+        </el-table-column>
         <el-table-column v-if="checkColumnDisplayed('status', columnsData.columns)" prop="status" label="是否启用" align="center" show-overflow-tooltip>
           <template slot-scope="scope">
             <el-tag v-if="scope.row.status === 1" size="mini" effect="plain" type="success"> <i class="el-icon-success" /> 启 用</el-tag>
@@ -79,6 +90,9 @@
     <ProductCategoryForm :id="editData.id" :title="editData.title" :visible.sync="editData.visiable" />
     <ProductCategoryDetail :id="showData.id" :title="showData.title" :visible.sync="showData.visiable" />
     <select-columns :title="columnsData.title" :columns="columnsData.columns" :visible.sync="columnsData.visiable" />
+    <el-dialog title="图标查看" :visible.sync="imgData.dialogVisible" class="jy-dialog" width="35%">
+      <img width="100%" :src="imgData.dialogImageUrl" alt="">
+    </el-dialog>
   </div>
 </template>
 
@@ -93,11 +107,16 @@ export default {
     return {
       deleteLoading: false,
       queryFormVisiable: true,
+      imgUrlPrefix: '/api/file-process/download/',
       queryForm: {
         name: null,
         code: null,
         status: null
       },
+      statusOptions: [
+        { value: '0', label: '禁用' },
+        { value: '1', label: '启用' }
+      ],
       tableData: {
         loading: false,
         pageNumber: 1,
@@ -131,6 +150,10 @@ export default {
           { key: 'status', label: '是否启用', _showed: true },
           { key: 'description', label: '描述', _showed: true }
         ]
+      },
+      imgData: {
+        dialogVisible: false,
+        dialogImageUrl: null
       }
     }
   },
@@ -214,6 +237,10 @@ export default {
     handleChangePage(page) {
       this.tableData.pageNumber = page
       this.getList()
+    },
+    handleIconClick(icon) {
+      this.imgData.dialogVisible = true
+      this.imgData.dialogImageUrl = this.imgUrlPrefix + icon
     }
   }
 }

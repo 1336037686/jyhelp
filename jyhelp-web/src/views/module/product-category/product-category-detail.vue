@@ -36,7 +36,7 @@
           <template slot="label">
             图标
           </template>
-          {{ form.icon }}
+          <el-avatar shape="square" size="large" :src="form.icon" />
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">
@@ -79,6 +79,7 @@ export default {
   data() {
     return {
       tmpVisible: this.visible,
+      imgUrlPrefix: '/api/file-process/download/',
       initloading: false,
       form: {
         id: null,
@@ -108,6 +109,7 @@ export default {
       productCategoryApi.getById(id).then(response => {
         this.initloading = false
         this.form = response.data
+        this.form.icon = this.imgUrlPrefix + this.form.icon
       }).catch(e => {
         this.initloading = false
       })
