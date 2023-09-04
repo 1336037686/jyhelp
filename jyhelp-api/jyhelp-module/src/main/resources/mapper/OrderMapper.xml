@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jyadmin.module.order.mapper.OrderMapper">
+    <resultMap id="BaseResultMap" type="com.jyadmin.module.order.domain.Order">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="orderCode" column="order_code" jdbcType="VARCHAR"/>
+            <result property="productId" column="product_id" jdbcType="BIGINT"/>
+            <result property="quantity" column="quantity" jdbcType="INTEGER"/>
+            <result property="userId" column="user_id" jdbcType="INTEGER"/>
+            <result property="totalAmount" column="total_amount" jdbcType="BIGINT"/>
+            <result property="finalTotalAmount" column="final_total_amount" jdbcType="BIGINT"/>
+            <result property="orderStatus" column="order_status" jdbcType="VARCHAR"/>
+            <result property="orderTime" column="order_time" jdbcType="TIMESTAMP"/>
+            <result property="paymentTime" column="payment_time" jdbcType="TIMESTAMP"/>
+            <result property="peymentMethod" column="peyment_method" jdbcType="VARCHAR"/>
+            <result property="remark" column="remark" jdbcType="VARCHAR"/>
+            <result property="version" column="version" jdbcType="BIGINT"/>
+            <result property="createBy" column="create_by" jdbcType="BIGINT"/>
+            <result property="updateBy" column="update_by" jdbcType="BIGINT"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+            <result property="deleted" column="deleted" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,
+        order_code,
+        product_id,
+        quantity,
+        user_id,
+        total_amount,
+        final_total_amount,
+        order_status,
+        order_time,
+        payment_time,
+        peyment_method,
+        remark,
+        version,
+        create_by,
+        update_by,
+        create_time,
+        update_time,
+        deleted
+    </sql>
+</mapper>

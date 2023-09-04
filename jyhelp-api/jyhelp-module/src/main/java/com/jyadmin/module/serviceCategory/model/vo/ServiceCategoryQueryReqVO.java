@@ -36,11 +36,6 @@ public class ServiceCategoryQueryReqVO extends BasePageVO implements Serializabl
     @ApiModelProperty(value = "服务编号", name = "code")
     private String code;
 
-    /**
-     * 服务图标
-     */
-    @ApiModelProperty(value = "服务图标", name = "icon")
-    private String icon;
 
     /**
      * 服务类型（服务时间类型、服务次数类型、物品类型等）
