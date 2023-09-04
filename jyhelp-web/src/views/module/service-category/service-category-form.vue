@@ -18,13 +18,13 @@
         element-loading-text="加载中，请稍后..."
         element-loading-spinner="el-icon-loading"
       >
-        <el-form-item label="名称：" prop="name">
+        <el-form-item label="服务名称：" prop="name">
           <el-input v-model="form.name" />
         </el-form-item>
-        <el-form-item label="编号：" prop="code">
+        <el-form-item label="服务编号：" prop="code">
           <el-input v-model="form.code" />
         </el-form-item>
-        <el-form-item label="图标：" prop="icon">
+        <el-form-item label="服务图标：" prop="icon">
           <el-upload
             ref="fileUpload"
             name="file"
@@ -42,13 +42,18 @@
             <i class="el-icon-plus" />
           </el-upload>
         </el-form-item>
+        <el-form-item label="服务类型：" prop="type">
+          <el-select v-model="form.type" style="width: 100%">
+            <el-option v-for="(item, index) in typeOptions" :key="'type_' + index" :label="item.name" :value="item.code" />
+          </el-select>
+        </el-form-item>
         <el-form-item label="是否启用：" prop="status">
           <el-radio-group v-model="form.status">
             <el-radio-button :label="0">禁用</el-radio-button>
             <el-radio-button :label="1">启用</el-radio-button>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="描述：" prop="description">
+        <el-form-item label="服务描述：" prop="description">
           <el-input v-model="form.description" type="textarea" :rows="2" maxlength="200" />
         </el-form-item>
       </el-form>
@@ -62,11 +67,11 @@
 
 <script>
 import { getIdempotentToken } from '@/api/system/auth/jy-auth'
-import productCategoryApi from '@/api/module/product-category/product-category-api'
+import serviceCategoryApi from '@/api/module/service-category/service-category-api'
 import fileProcessApi from '@/api/system/file/jy-file-process'
 import fileRecordApi from '@/api/system/file/jy-file-record'
 export default {
-  name: 'ProductCategoryForm',
+  name: 'ServiceCategoryForm',
   props: {
     title: {
       type: String,
@@ -93,6 +98,7 @@ export default {
         name: null,
         code: null,
         icon: null,
+        type: null,
         description: null,
         status: 1
       },
@@ -101,15 +107,18 @@ export default {
           { required: true, message: '请输入ID', trigger: 'blur' }
         ],
         name: [
-          { required: true, message: '请输入名称', trigger: 'blur' },
+          { required: true, message: '请输入服务名称', trigger: 'blur' },
           { max: 30, message: '不能超过30个字符', trigger: 'blur' }
         ],
         code: [
-          { required: true, message: '请输入编号', trigger: 'blur' },
+          { required: true, message: '请输入服务编号', trigger: 'blur' },
           { max: 30, message: '不能超过30个字符', trigger: 'blur' }
         ],
         icon: [
-          { required: true, message: '请输入图标', trigger: 'blur' }
+          { required: true, message: '请输入服务图标', trigger: 'blur' }
+        ],
+        type: [
+          { required: true, message: '请输入服务类型', trigger: 'blur' }
         ],
         description: [
           { max: 200, message: '不能超过200个字符', trigger: 'blur' }
@@ -118,6 +127,7 @@ export default {
           { required: true, message: '请输入是否启用', trigger: 'blur' }
         ]
       },
+      typeOptions: [],
       imgUrlPrefix: '/api/file-process/download/',
       fileList: [],
       fileDisabled: false
@@ -135,7 +145,7 @@ export default {
           this.type = 'update'
           this.getById(this.id)
         } else {
-          // 否则为新增操作
+        // 否则为新增操作
           this.type = 'insert'
         }
       }
@@ -145,7 +155,15 @@ export default {
     },
     deep: true
   },
+  created() {
+    this.initDataDict()
+  },
   methods: {
+    initDataDict() {
+      this.getDictByCode('module_shop_service_category_type').then(res => {
+        this.typeOptions = res.data
+      })
+    },
     async getIdempotentToken() {
       this.initloading = true
       await getIdempotentToken().then(res => {
@@ -165,7 +183,7 @@ export default {
     },
     handleCreate() {
       this.submitLoading = true
-      productCategoryApi.add(this.form, this.idempotentToken).then(response => {
+      serviceCategoryApi.add(this.form, this.idempotentToken).then(response => {
         this.submitLoading = false
         this.$notify.success({ title: '成功', message: '添加成功' })
         this.$parent.getList()
@@ -179,7 +197,7 @@ export default {
     },
     handleUpdate() {
       this.submitLoading = true
-      productCategoryApi.update(this.form, this.idempotentToken).then(response => {
+      serviceCategoryApi.update(this.form, this.idempotentToken).then(response => {
         this.submitLoading = false
         this.$notify.success({ title: '成功', message: '修改成功' })
         this.$parent.getList()
@@ -193,7 +211,7 @@ export default {
     },
     async getById(id) {
       this.initloading = true
-      await productCategoryApi.getById(id).then(response => {
+      await serviceCategoryApi.getById(id).then(response => {
         this.form = response.data
       }).catch(e => {
         this.initloading = false
@@ -241,7 +259,7 @@ export default {
         this.$notify.error('请选择上传文件!')
         return
       }
-      const relevance = 'product-category' // 测试模块
+      const relevance = 'service-category' // 模块
       const formData = new FormData()
       this.fileList.forEach(item => {
         formData.append('file', item.raw)

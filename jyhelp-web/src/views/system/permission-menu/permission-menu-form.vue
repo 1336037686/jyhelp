@@ -258,7 +258,7 @@
         </el-row>
 
         <el-form-item label="描述：" prop="description">
-          <el-input v-model="form.description" type="textarea" />
+          <el-input v-model="form.description" type="textarea" maxlength="200" :rows="2" />
         </el-form-item>
       </el-form>
     </div>

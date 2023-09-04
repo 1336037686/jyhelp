@@ -16,32 +16,38 @@
       <el-descriptions :column="2" border>
         <el-descriptions-item>
           <template slot="label">
-            名称
+            服务名称
           </template>
           {{ form.name }}
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">
-            编号
+            服务编号
           </template>
           {{ form.code }}
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">
-            图标
+            服务图标
           </template>
           <el-avatar shape="square" size="large" :src="form.icon" />
         </el-descriptions-item>
-        <el-descriptions-item span="2">
+        <el-descriptions-item>
+          <template slot="label">
+            服务类型
+          </template>
+          {{ getNameByCode(typeOptions, form.type) }}
+        </el-descriptions-item>
+        <el-descriptions-item :span="2">
           <template slot="label">
             是否启用
           </template>
           <el-tag v-if="form.status === 1" size="mini" effect="plain" type="success"> <i class="el-icon-success" /> 启 用</el-tag>
           <el-tag v-if="form.status === 0" size="mini" effect="plain" type="danger"> <i class="el-icon-error" /> 禁 用</el-tag>
         </el-descriptions-item>
-        <el-descriptions-item span="2">
+        <el-descriptions-item :span="2">
           <template slot="label">
-            描述
+            服务描述
           </template>
           {{ form.description }}
         </el-descriptions-item>
@@ -54,9 +60,9 @@
 </template>
 
 <script>
-import productCategoryApi from '@/api/module/product-category/product-category-api'
+import serviceCategoryApi from '@/api/module/service-category/service-category-api'
 export default {
-  name: 'ProductCategoryDetail',
+  name: 'ServiceCategoryDetail',
   props: {
     title: {
       type: String,
@@ -74,13 +80,15 @@ export default {
   data() {
     return {
       tmpVisible: this.visible,
-      imgUrlPrefix: '/api/file-process/download/',
       initloading: false,
+      imgUrlPrefix: '/api/file-process/download/',
+      typeOptions: [],
       form: {
         id: null,
         name: null,
         code: null,
         icon: null,
+        type: null,
         description: null,
         status: null
       }
@@ -98,10 +106,15 @@ export default {
     },
     deep: true
   },
+  created() {
+    this.getDictByCode('module_shop_service_category_type').then(res => {
+      this.typeOptions = res.data
+    })
+  },
   methods: {
     getById(id) {
       this.initloading = true
-      productCategoryApi.getById(id).then(response => {
+      serviceCategoryApi.getById(id).then(response => {
         this.initloading = false
         this.form = response.data
         this.form.icon = this.imgUrlPrefix + this.form.icon

@@ -14,17 +14,17 @@
         v-loading="initloading"
         :rules="rules"
         :model="form"
-        label-width="80px"
+        label-width="100px"
         element-loading-text="加载中，请稍后..."
         element-loading-spinner="el-icon-loading"
       >
-        <el-form-item label="公告标题" prop="title">
+        <el-form-item label="公告标题：" prop="title">
           <el-input v-model="form.title" />
         </el-form-item>
-        <el-form-item label="公告内容" prop="content">
+        <el-form-item label="公告内容：" prop="content">
           <el-input v-model="form.content" />
         </el-form-item>
-        <el-form-item label="公告状态" prop="status">
+        <el-form-item label="公告状态：" prop="status">
           <el-select v-model="form.status" placeholder="" style="width: 100%">
             <el-option v-for="item in statusOptions" :key="item.code" :label="item.name" :value="item.code" />
           </el-select>

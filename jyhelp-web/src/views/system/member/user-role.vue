@@ -20,14 +20,14 @@
       >
         <el-row>
           <el-col :span="24">
-            <el-form-item label="用户名称" prop="name">
+            <el-form-item label="用户名称：" prop="name">
               <el-input v-model="form.name" readonly />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="24">
-            <el-form-item label="用户角色" prop="parentId">
+            <el-form-item label="用户角色：" prop="parentId">
               <el-select v-model="form.roleIds" placeholder="请选择" multiple filterable style="width: 100%">
                 <el-option
                   v-for="item in roles"

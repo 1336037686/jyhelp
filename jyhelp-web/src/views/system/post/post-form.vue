@@ -14,14 +14,14 @@
         v-loading="initloading"
         :rules="rules"
         :model="form"
-        label-width="80px"
+        label-width="100px"
         element-loading-text="加载中，请稍后..."
         element-loading-spinner="el-icon-loading"
       >
-        <el-form-item label="岗位名称" prop="name">
+        <el-form-item label="岗位名称：" prop="name">
           <el-input v-model="form.name" />
         </el-form-item>
-        <el-form-item label="岗位编码" prop="code">
+        <el-form-item label="岗位编码：" prop="code">
           <el-input v-model="form.code" />
         </el-form-item>
         <el-form-item label="状态：" prop="status">
@@ -30,7 +30,7 @@
             <el-radio-button :label="1">启用</el-radio-button>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="岗位简介" prop="description">
+        <el-form-item label="岗位简介：" prop="description">
           <el-input v-model="form.description" type="textarea" />
         </el-form-item>
       </el-form>

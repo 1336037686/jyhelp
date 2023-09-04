@@ -14,17 +14,17 @@
         v-loading="initloading"
         :rules="rules"
         :model="form"
-        label-width="80px"
+        label-width="100px"
         element-loading-text="加载中，请稍后..."
         element-loading-spinner="el-icon-loading"
       >
-        <el-form-item label="标签名称" prop="name">
+        <el-form-item label="标签名称：" prop="name">
           <el-input v-model="form.name" />
         </el-form-item>
-        <el-form-item label="标签编码" prop="code">
+        <el-form-item label="标签编码：" prop="code">
           <el-input v-model="form.code" />
         </el-form-item>
-        <el-form-item label="标签简介" prop="intro">
+        <el-form-item label="标签简介：" prop="intro">
           <el-input v-model="form.intro" type="textarea" />
         </el-form-item>
       </el-form>

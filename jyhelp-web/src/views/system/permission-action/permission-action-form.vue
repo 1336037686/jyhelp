@@ -30,7 +30,7 @@
           <el-input v-model.number="form.sort" />
         </el-form-item>
         <el-form-item label="描述：" prop="description">
-          <el-input v-model="form.description" type="textarea" />
+          <el-input v-model="form.description" type="textarea" :rows="2" maxlength="255" />
         </el-form-item>
       </el-form>
     </div>

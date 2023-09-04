@@ -25,7 +25,7 @@
           <el-input v-model="form.code" />
         </el-form-item>
         <el-form-item label="描述：" prop="remark">
-          <el-input v-model="form.remark" type="textarea" />
+          <el-input v-model="form.remark" type="textarea" :rows="2" maxlength="200" />
         </el-form-item>
       </el-form>
     </div>
