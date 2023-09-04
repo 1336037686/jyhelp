@@ -77,6 +77,7 @@
             <el-tag v-if="scope.row.status === 0" size="mini" effect="plain" type="danger"> <i class="el-icon-error" /> 禁 用</el-tag>
           </template>
         </el-table-column>
+        <el-table-column v-if="checkColumnDisplayed('createTime', columnsData.columns)" prop="createTime" label="创建时间" width="200" align="center" />
         <el-table-column v-if="checkColumnDisplayed('description', columnsData.columns)" prop="description" label="服务描述" align="center" show-overflow-tooltip />
       </el-table>
       <div style="text-align: center;margin-top: 10px">
@@ -151,8 +152,9 @@ export default {
           { key: 'code', label: '服务编号', _showed: true },
           { key: 'icon', label: '服务图标', _showed: true },
           { key: 'type', label: '服务类型', _showed: true },
-          { key: 'description', label: '服务描述', _showed: true },
-          { key: 'status', label: '是否启用', _showed: true }
+          { key: 'status', label: '是否启用', _showed: true },
+          { key: 'createTime', label: '创建时间', _showed: true },
+          { key: 'description', label: '服务描述', _showed: true }
         ]
       },
       imgData: {

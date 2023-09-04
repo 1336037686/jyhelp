@@ -3,7 +3,7 @@ import request from '@/utils/request-api'
 export default {
   getList(query) {
     return request({
-      url: '/api/product-category/query',
+      url: '/api/product/query',
       method: 'get',
       params: query
     })
@@ -11,22 +11,14 @@ export default {
 
   getById(id) {
     return request({
-      url: '/api/product-category/query/' + id,
+      url: '/api/product/query/' + id,
       method: 'get'
-    })
-  },
-
-  list(query) {
-    return request({
-      url: '/api/product-category/list',
-      method: 'get',
-      params: query
     })
   },
 
   add(data, idempotentToken) {
     return request({
-      url: '/api/product-category/create',
+      url: '/api/product/create',
       method: 'post',
       params: { 'idempotent-token': idempotentToken },
       data
@@ -35,7 +27,7 @@ export default {
 
   update(data, idempotentToken) {
     return request({
-      url: '/api/product-category/update',
+      url: '/api/product/update',
       method: 'put',
       params: { 'idempotent-token': idempotentToken },
       data
@@ -44,7 +36,7 @@ export default {
 
   remove(data) {
     return request({
-      url: '/api/product-category/remove',
+      url: '/api/product/remove',
       method: 'delete',
       data
     })

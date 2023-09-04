@@ -16,6 +16,14 @@ export default {
     })
   },
 
+  list(query) {
+    return request({
+      url: '/api/service-category/list',
+      method: 'get',
+      params: query
+    })
+  },
+
   add(data, idempotentToken) {
     return request({
       url: '/api/service-category/create',
