@@ -16,12 +16,6 @@
       <el-descriptions :column="2" border>
         <el-descriptions-item>
           <template slot="label">
-            ID
-          </template>
-          {{ form.id }}
-        </el-descriptions-item>
-        <el-descriptions-item>
-          <template slot="label">
             订单编号
           </template>
           {{ form.orderCode }}
@@ -46,13 +40,13 @@
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">
-            所需金额（分）
+            所需金额
           </template>
           {{ form.totalAmount }}
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">
-            实际金额（分）
+            实际金额
           </template>
           {{ form.finalTotalAmount }}
         </el-descriptions-item>
