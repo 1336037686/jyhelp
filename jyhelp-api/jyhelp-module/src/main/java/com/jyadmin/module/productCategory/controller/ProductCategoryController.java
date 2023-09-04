@@ -34,7 +34,7 @@ import java.util.Set;
  * @description: ProductCategoryController <br>
  */
 @Slf4j
-@Api(value = "商品类别表", tags = {"系统：商品类别表"})
+@Api(value = "商品类别", tags = {"系统：商品类别"})
 @RequestMapping("/api/product-category")
 @RestController
 public class ProductCategoryController {
@@ -44,7 +44,7 @@ public class ProductCategoryController {
 
 
     @RateLimit @Idempotent
-    @ApiOperation(value = "新增商品类别表", notes = "")
+    @ApiOperation(value = "新增商品类别", notes = "")
     @PostMapping("/create")
     @PreAuthorize("@jy.check('productCategory:create')")
     public Result<Object> doCreate(@RequestBody @Valid ProductCategoryCreateReqVO vo) {
@@ -52,7 +52,7 @@ public class ProductCategoryController {
     }
 
     @RateLimit @Idempotent
-    @ApiOperation(value = "更新商品类别表", notes = "")
+    @ApiOperation(value = "更新商品类别", notes = "")
     @PutMapping("/update")
     @PreAuthorize("@jy.check('productCategory:update')")
     public Result<Object> doUpdate(@RequestBody @Valid ProductCategoryUpdateReqVO vo) {
@@ -61,21 +61,21 @@ public class ProductCategoryController {
         return ResultUtil.toResult(productCategoryService.updateById(productCategory));
     }
 
-    @ApiOperation(value = "删除商品类别表", notes = "")
+    @ApiOperation(value = "删除商品类别", notes = "")
     @DeleteMapping("/remove")
     @PreAuthorize("@jy.check('productCategory:remove')")
     public Result<Object> doRemove(@RequestBody Set<String> ids) {
         return ResultUtil.toResult(productCategoryService.removeByIds(ids));
     }
 
-    @ApiOperation(value = "根据ID获取当前商品类别表", notes = "")
+    @ApiOperation(value = "根据ID获取当前商品类别", notes = "")
     @GetMapping("/query/{id}")
     @PreAuthorize("@jy.check('productCategory:queryById')")
     public Result<Object> doQueryById(@PathVariable String id) {
         return Result.ok(productCategoryService.getById(id));
     }
 
-    @ApiOperation(value = "分页查询商品类别表", notes = "")
+    @ApiOperation(value = "分页查询商品类别", notes = "")
     @GetMapping("/query")
     @PreAuthorize("@jy.check('productCategory:query')")
     public PageResult<ProductCategory> doQueryPage(ProductCategoryQueryReqVO vo) {

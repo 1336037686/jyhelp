@@ -14,13 +14,13 @@
        v-loading="initloading"
        :rules="rules"
        :model="form"
-       label-width="80px"
+       label-width="100px"
        element-loading-text="加载中，请稍后..."
        element-loading-spinner="el-icon-loading">
 #foreach($field in $fields)
   #if($field.fieldIgnore == 0)
     #if($field.showForm == 1)
-      <el-form-item label="${field.fieldRemark}" prop="${field.realFieldNameLowCamelCase}">
+      <el-form-item label="${field.fieldRemark}：" prop="${field.realFieldNameLowCamelCase}">
         <el-input v-model="form.${field.realFieldNameLowCamelCase}" />
       </el-form-item>
     #end
@@ -135,7 +135,7 @@ export default {
     },
     handleCreate() {
       this.submitLoading = true
-      ${realTableNameLowCamelCase}Api.add(this.form).then(response => {
+      ${realTableNameLowCamelCase}Api.add(this.form, this.idempotentToken).then(response => {
         this.submitLoading = false
         this.$notify.success({ title: '成功', message: '添加成功' })
         this.$parent.getList()
@@ -149,7 +149,7 @@ export default {
     },
     handleUpdate() {
       this.submitLoading = true
-      ${realTableNameLowCamelCase}Api.update(this.form).then(response => {
+      ${realTableNameLowCamelCase}Api.update(this.form, this.idempotentToken).then(response => {
         this.submitLoading = false
         this.$notify.success({ title: '成功', message: '修改成功' })
         this.$parent.getList()
