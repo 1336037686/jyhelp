@@ -152,8 +152,8 @@ jyadmin:
     enabled: true
     # 缓存key前缀
     prefix: jyhelp_idempotent
-    # 默认过期时间
-    default-period: 1800
+    # 默认过期时间 3h
+    default-period: 10800
   # 缓存
   cache:
     # 缓存管理器配置

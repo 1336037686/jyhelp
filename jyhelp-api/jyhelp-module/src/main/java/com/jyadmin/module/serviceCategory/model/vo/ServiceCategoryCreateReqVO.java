@@ -51,7 +51,6 @@ public class ServiceCategoryCreateReqVO implements Serializable {
      * 服务描述
      */
     @ApiModelProperty(value = "服务描述", name = "description")
-    @NotBlank(message = "服务描述不能为空")
     private String description;
 
     /**

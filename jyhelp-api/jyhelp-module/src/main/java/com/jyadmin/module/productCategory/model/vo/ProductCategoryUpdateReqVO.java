@@ -51,7 +51,6 @@ public class ProductCategoryUpdateReqVO implements Serializable {
      * 描述
      */
     @ApiModelProperty(value = "描述", name = "description")
-    @NotBlank(message = "描述不能为空")
     private String description;
 
     /**

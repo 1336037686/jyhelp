@@ -141,7 +141,7 @@ jyadmin:
     # 缓存key前缀
     prefix: jyadmin_idempotent
     # 默认过期时间
-    default-period: 1800
+    default-period: 10800
   # Api文档配置
   document:
     # 文档描述

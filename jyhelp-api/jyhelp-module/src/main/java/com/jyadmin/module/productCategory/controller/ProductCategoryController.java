@@ -8,6 +8,7 @@ import com.jyadmin.annotation.Idempotent;
 import com.jyadmin.annotation.RateLimit;
 import com.jyadmin.domain.PageResult;
 import com.jyadmin.domain.Result;
+import com.jyadmin.module.product.domain.Product;
 import com.jyadmin.module.productCategory.domain.ProductCategory;
 import com.jyadmin.module.productCategory.model.vo.ProductCategoryCreateReqVO;
 import com.jyadmin.module.productCategory.model.vo.ProductCategoryQueryReqVO;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -34,7 +36,7 @@ import java.util.Set;
  * @description: ProductCategoryController <br>
  */
 @Slf4j
-@Api(value = "商品类别", tags = {"系统：商品类别"})
+@Api(value = "商品类别", tags = {"商城：商品类别"})
 @RequestMapping("/api/product-category")
 @RestController
 public class ProductCategoryController {
@@ -73,6 +75,18 @@ public class ProductCategoryController {
     @PreAuthorize("@jy.check('productCategory:queryById')")
     public Result<Object> doQueryById(@PathVariable String id) {
         return Result.ok(productCategoryService.getById(id));
+    }
+
+    @ApiOperation(value = "列表查询商品类别", notes = "")
+    @GetMapping("/list")
+    @PreAuthorize("@jy.check('productCategory:list')")
+    public Result<List<ProductCategory>> doQueryList(ProductCategoryQueryReqVO vo) {
+        List<ProductCategory> list = this.productCategoryService.list(new LambdaQueryWrapper<ProductCategory>()
+                .like(StringUtils.isNotBlank(vo.getName()), ProductCategory::getName, vo.getName())
+                .like(StringUtils.isNotBlank(vo.getCode()), ProductCategory::getCode, vo.getCode())
+                .eq(Objects.nonNull(vo.getStatus()), ProductCategory::getStatus, vo.getStatus())
+        );
+        return Result.ok(list);
     }
 
     @ApiOperation(value = "分页查询商品类别", notes = "")

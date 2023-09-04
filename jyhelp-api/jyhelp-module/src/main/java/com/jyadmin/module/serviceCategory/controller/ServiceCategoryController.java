@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -34,7 +35,7 @@ import java.util.Set;
  * @description: ServiceCategoryController <br>
  */
 @Slf4j
-@Api(value = "服务类别", tags = {"系统：服务类别"})
+@Api(value = "服务类别", tags = {"商城：服务类别"})
 @RequestMapping("/api/service-category")
 @RestController
 public class ServiceCategoryController {
@@ -74,6 +75,20 @@ public class ServiceCategoryController {
         return Result.ok(serviceCategoryService.getById(id));
     }
 
+    @ApiOperation(value = "列表查询服务类别", notes = "")
+    @GetMapping("/list")
+    @PreAuthorize("@jy.check('serviceCategory:list')")
+    public Result<List<ServiceCategory>> doQueryList(ServiceCategoryQueryReqVO vo) {
+        return Result.ok(this.serviceCategoryService.list(
+                        new LambdaQueryWrapper<ServiceCategory>()
+                                .eq(Objects.nonNull(vo.getId()), ServiceCategory::getId, vo.getId())
+                                .like(StringUtils.isNotBlank(vo.getName()), ServiceCategory::getName, vo.getName())
+                                .like(Objects.nonNull(vo.getCode()), ServiceCategory::getCode, vo.getCode())
+                                .eq(Objects.nonNull(vo.getType()), ServiceCategory::getType, vo.getType())
+                                .eq(Objects.nonNull(vo.getStatus()), ServiceCategory::getStatus, vo.getStatus())
+        ));
+    }
+
     @ApiOperation(value = "分页查询服务类别", notes = "")
     @GetMapping("/query")
     @PreAuthorize("@jy.check('serviceCategory:query')")
@@ -83,8 +98,7 @@ public class ServiceCategoryController {
                         new LambdaQueryWrapper<ServiceCategory>()
                             .eq(Objects.nonNull(vo.getId()), ServiceCategory::getId, vo.getId())
                             .like(StringUtils.isNotBlank(vo.getName()), ServiceCategory::getName, vo.getName())
-                            .eq(Objects.nonNull(vo.getCode()), ServiceCategory::getCode, vo.getCode())
-                            .eq(Objects.nonNull(vo.getIcon()), ServiceCategory::getIcon, vo.getIcon())
+                            .like(Objects.nonNull(vo.getCode()), ServiceCategory::getCode, vo.getCode())
                             .eq(Objects.nonNull(vo.getType()), ServiceCategory::getType, vo.getType())
                             .eq(Objects.nonNull(vo.getStatus()), ServiceCategory::getStatus, vo.getStatus())
                 )

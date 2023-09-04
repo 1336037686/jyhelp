@@ -28,9 +28,9 @@ public class JyIdempotentProperties {
 
     /**
      * 默认过期时间
-     * 30min = 30 * 60s
+     * 3h = 3 * 60 * 60s
      */
-    private Integer defaultPeriod = 30 * 60;
+    private Integer defaultPeriod = 3 * 60 * 60;
 
     /**
      * 缓存Key默认存放值
