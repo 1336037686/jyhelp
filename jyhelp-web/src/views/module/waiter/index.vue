@@ -120,8 +120,7 @@ export default {
         username: '',
         nickname: '',
         phone: '',
-        roles: 'waiter',
-        department: null
+        roles: 'waiter'
       },
       tableData: {
         loading: false,
