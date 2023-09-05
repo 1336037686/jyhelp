@@ -76,6 +76,12 @@ public class Product extends BaseEntity implements Serializable {
     private Integer stock;
 
     /**
+     * 库存锁定量
+     */
+    @TableField(value = "lock_stock")
+    private Integer lockStock;
+
+    /**
      * 商品单位
      */
     @TableField(value = "unit")
