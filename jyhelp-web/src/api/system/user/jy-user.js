@@ -24,6 +24,14 @@ export default {
     })
   },
 
+  addWaiter(data) {
+    return request({
+      url: '/api/user/create-waiter',
+      method: 'post',
+      data
+    })
+  },
+
   update(data) {
     return request({
       url: '/api/user/update',

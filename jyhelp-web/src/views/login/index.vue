@@ -54,35 +54,35 @@
             <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:10px;" @click.native.prevent="handleLogin">登 陆</el-button>
           </el-form>
           <!--注册-->
-          <el-form v-show="!isLogin" ref="registerForm" :model="registerForm" :rules="registerRules" autocomplete="on" label-position="left">
-            <div class="title-container">
-              <h3 class="title"> {{ loginBasicSettings.sysSiteName }} </h3>
-            </div>
-            <el-form-item prop="phone">
-              <span class="svg-container">
-                <svg-icon icon-class="user" />
-              </span>
-              <el-input ref="registerForm-phone" v-model="registerForm.phone" placeholder="手机号" name="phone" type="text" tabindex="1" autocomplete="on" />
-            </el-form-item>
-            <el-row>
-              <el-col :span="15">
-                <el-form-item prop="captcha">
-                  <span class="svg-container">
-                    <svg-icon icon-class="chart" />
-                  </span>
-                  <el-input ref="registerForm-captcha" v-model="registerForm.captcha" placeholder="验证码" name="captcha" type="text" tabindex="1" autocomplete="on" />
-                </el-form-item>
-              </el-col>
-              <el-col :span="9" style="padding-left: 5px">
-                <el-button v-if="!retryLoading" type="primary" style="width: 100%;height: 50px" @click="getPhoneCaptcha">获取验证码</el-button>
-                <el-button v-if="retryLoading" style="width: 100%;height: 50px">{{ retryCountDown }}秒后重新获取</el-button>
-              </el-col>
-            </el-row>
-            <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:10px;" @click.native.prevent="handleRegister">注 册</el-button>
-          </el-form>
+          <!--          <el-form v-show="!isLogin" ref="registerForm" :model="registerForm" :rules="registerRules" autocomplete="on" label-position="left">-->
+          <!--            <div class="title-container">-->
+          <!--              <h3 class="title"> {{ loginBasicSettings.sysSiteName }} </h3>-->
+          <!--            </div>-->
+          <!--            <el-form-item prop="phone">-->
+          <!--              <span class="svg-container">-->
+          <!--                <svg-icon icon-class="user" />-->
+          <!--              </span>-->
+          <!--              <el-input ref="registerForm-phone" v-model="registerForm.phone" placeholder="手机号" name="phone" type="text" tabindex="1" autocomplete="on" />-->
+          <!--            </el-form-item>-->
+          <!--            <el-row>-->
+          <!--              <el-col :span="15">-->
+          <!--                <el-form-item prop="captcha">-->
+          <!--                  <span class="svg-container">-->
+          <!--                    <svg-icon icon-class="chart" />-->
+          <!--                  </span>-->
+          <!--                  <el-input ref="registerForm-captcha" v-model="registerForm.captcha" placeholder="验证码" name="captcha" type="text" tabindex="1" autocomplete="on" />-->
+          <!--                </el-form-item>-->
+          <!--              </el-col>-->
+          <!--              <el-col :span="9" style="padding-left: 5px">-->
+          <!--                <el-button v-if="!retryLoading" type="primary" style="width: 100%;height: 50px" @click="getPhoneCaptcha">获取验证码</el-button>-->
+          <!--                <el-button v-if="retryLoading" style="width: 100%;height: 50px">{{ retryCountDown }}秒后重新获取</el-button>-->
+          <!--              </el-col>-->
+          <!--            </el-row>-->
+          <!--            <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:10px;" @click.native.prevent="handleRegister">注 册</el-button>-->
+          <!--          </el-form>-->
           <div style="text-align: right">
-            <span v-if="isLogin"><a class="forget-pwd" @click="isLogin = false">用户注册</a> / </span>
-            <span v-if="!isLogin"><a class="forget-pwd" @click="isLogin = true">用户登录</a> / </span>
+            <!--            <span v-if="isLogin"><a class="forget-pwd" @click="isLogin = false">用户注册</a> / </span>-->
+            <!--            <span v-if="!isLogin"><a class="forget-pwd" @click="isLogin = true">用户登录</a> / </span>-->
             <span><a class="forget-pwd" @click="forgetPwd">忘记密码</a></span>
           </div>
         </el-card>
