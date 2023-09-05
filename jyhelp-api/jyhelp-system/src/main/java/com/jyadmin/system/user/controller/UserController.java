@@ -64,6 +64,7 @@ public class UserController {
     @PreAuthorize("@jy.check('user:create')")
     public Result<Object> doCreate(@RequestBody @Valid UserCreateVO vo) {
         vo.setPassword(new BCryptPasswordEncoder().encode(vo.getPassword()));
+        if (StringUtils.isBlank(vo.getAvatar())) vo.setAvatar(GlobalConstants.DEFAULT_USER_AVATAR);
         return ResultUtil.toResult(userService.save(BeanUtil.copyProperties(vo, User.class)));
     }
 
@@ -155,6 +156,17 @@ public class UserController {
                         )
                         .orderByDesc(User::getCreateTime)
         ));
+    }
+
+    @RateLimit
+    @Log(title = "系统管理：新增服务人员", desc = "新增服务人员")
+    @ApiOperation(value = "新增服务人员", notes = "")
+    @PostMapping("/create-waiter")
+    @PreAuthorize("@jy.check('user:create-waiter')")
+    public Result<Object> doCreateWaiter(@RequestBody @Valid UserCreateVO vo) {
+        vo.setPassword(new BCryptPasswordEncoder().encode(vo.getPassword()));
+        vo.setAvatar(GlobalConstants.DEFAULT_USER_AVATAR);
+        return ResultUtil.toResult(userService.saveWaiter(BeanUtil.copyProperties(vo, User.class)));
     }
 
 }

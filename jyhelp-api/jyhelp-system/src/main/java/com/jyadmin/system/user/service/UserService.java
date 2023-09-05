@@ -18,4 +18,7 @@ public interface UserService extends IService<User> {
     Page<UserDTO> getPage(Page<User> result, LambdaQueryWrapper<User> wrapper);
 
     UserDTO getUserDetailById(Long id);
+
+    Boolean saveWaiter(User copyProperties);
+
 }

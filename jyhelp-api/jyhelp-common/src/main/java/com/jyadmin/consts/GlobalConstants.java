@@ -29,6 +29,10 @@ public class GlobalConstants {
 
     // 默认用户角色编码
     public static final String DEFAULT_USER_ROLE = "member";
+    // 默认会员角色编码
+    public static final String DEFAULT_MEMBER_ROLE = "member";
+    // 默认服务员角色编码
+    public static final String DEFAULT_WAITER_ROLE = "waiter";
 
     // 默认用户头像
     public static final String DEFAULT_USER_AVATAR = "https://himg.bdimg.com/sys/portrait/item/pp.1.7cc3463a.Sy3bpWfCP6umkh2-3oWVVg.jpg";
