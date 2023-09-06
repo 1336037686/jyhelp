@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jyadmin.module.customerService.mapper.CustomerServiceMapper">
+    <resultMap id="BaseResultMap" type="com.jyadmin.module.customerService.domain.CustomerService">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="serviceCode" column="service_code" jdbcType="VARCHAR"/>
+            <result property="userId" column="user_id" jdbcType="BIGINT"/>
+            <result property="serviceCategoryId" column="service_category_id" jdbcType="BIGINT"/>
+            <result property="serviceStock" column="service_stock" jdbcType="VARCHAR"/>
+            <result property="serviceStatus" column="service_status" jdbcType="VARCHAR"/>
+            <result property="version" column="version" jdbcType="BIGINT"/>
+            <result property="createBy" column="create_by" jdbcType="BIGINT"/>
+            <result property="updateBy" column="update_by" jdbcType="BIGINT"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+            <result property="deleted" column="deleted" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,
+        service_code,
+        user_id,
+        service_category_id,
+        service_stock,
+        service_status,
+        version,
+        create_by,
+        update_by,
+        create_time,
+        update_time,
+        deleted
+    </sql>
+</mapper>
