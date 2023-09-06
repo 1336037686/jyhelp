@@ -16,12 +16,6 @@
       <el-descriptions :column="2" border>
         <el-descriptions-item>
           <template slot="label">
-            ID
-          </template>
-          {{ form.id }}
-        </el-descriptions-item>
-        <el-descriptions-item>
-          <template slot="label">
             服务项目编号
           </template>
           {{ form.serviceCode }}
@@ -34,7 +28,7 @@
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">
-            服务类别 tb_service_category ID
+            服务类别
           </template>
           {{ form.serviceCategoryId }}
         </el-descriptions-item>

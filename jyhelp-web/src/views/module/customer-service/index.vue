@@ -6,21 +6,21 @@
     element-loading-spinner="el-icon-loading"
   >
     <el-card class="box-card" shadow="always">
-      <el-form v-show="queryFormVisiable" :inline="true" size="mini" :model="queryForm" label-width="100px">
+      <el-form v-show="queryFormVisiable" :inline="true" size="mini" :model="queryForm" label-width="120px">
         <el-form-item label="服务项目编号：">
           <el-input v-model="queryForm.serviceCode" placeholder="服务项目编号" />
         </el-form-item>
         <el-form-item label="用户ID：">
           <el-input v-model="queryForm.userId" placeholder="用户ID" />
         </el-form-item>
-        <el-form-item label="服务类别 tb_service_category ID：">
-          <el-input v-model="queryForm.serviceCategoryId" placeholder="服务类别 tb_service_category ID" />
+        <el-form-item label="服务类别：">
+          <el-input v-model="queryForm.serviceCategoryId" placeholder="服务类别" />
         </el-form-item>
         <el-form-item label="剩余服务库存：">
           <el-input v-model="queryForm.serviceStock" placeholder="剩余服务库存" />
         </el-form-item>
-        <el-form-item label="服务状态 （服务中、已结束）：">
-          <el-input v-model="queryForm.serviceStatus" placeholder="服务状态 （服务中、已结束）" />
+        <el-form-item label="服务状态：">
+          <el-input v-model="queryForm.serviceStatus" placeholder="服务状态" />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" icon="el-icon-search" @click="handleQuery">查 询</el-button>
@@ -37,7 +37,7 @@
 
     <el-card class="box-card" shadow="always" style="margin-top: 5px">
       <div slot="header" class="clearfix">
-        <span><i class="el-icon-caret-right" /> 会员服务表记录</span>
+        <span><i class="el-icon-caret-right" /> 会员服务记录</span>
         <el-row style="float: right">
           <el-button icon="el-icon-search" circle size="mini" @click="() => this.queryFormVisiable = !this.queryFormVisiable" />
           <el-button icon="el-icon-refresh" circle size="mini" @click="handleQuery()" />
@@ -61,9 +61,9 @@
         <el-table-column v-if="checkColumnDisplayed('id', columnsData.columns)" prop="id" label="ID" align="center" show-overflow-tooltip />
         <el-table-column v-if="checkColumnDisplayed('serviceCode', columnsData.columns)" prop="serviceCode" label="服务项目编号" align="center" show-overflow-tooltip />
         <el-table-column v-if="checkColumnDisplayed('userId', columnsData.columns)" prop="userId" label="用户ID" align="center" show-overflow-tooltip />
-        <el-table-column v-if="checkColumnDisplayed('serviceCategoryId', columnsData.columns)" prop="serviceCategoryId" label="服务类别 tb_service_category ID" align="center" show-overflow-tooltip />
+        <el-table-column v-if="checkColumnDisplayed('serviceCategoryId', columnsData.columns)" prop="serviceCategoryId" label="服务类别" align="center" show-overflow-tooltip />
         <el-table-column v-if="checkColumnDisplayed('serviceStock', columnsData.columns)" prop="serviceStock" label="剩余服务库存" align="center" show-overflow-tooltip />
-        <el-table-column v-if="checkColumnDisplayed('serviceStatus', columnsData.columns)" prop="serviceStatus" label="服务状态 （服务中、已结束）" align="center" show-overflow-tooltip />
+        <el-table-column v-if="checkColumnDisplayed('serviceStatus', columnsData.columns)" prop="serviceStatus" label="服务状态" align="center" show-overflow-tooltip />
       </el-table>
       <div style="text-align: center;margin-top: 10px">
         <el-pagination
@@ -131,9 +131,9 @@ export default {
           { key: 'id', label: 'ID', _showed: true },
           { key: 'serviceCode', label: '服务项目编号', _showed: true },
           { key: 'userId', label: '用户ID', _showed: true },
-          { key: 'serviceCategoryId', label: '服务类别 tb_service_category ID', _showed: true },
+          { key: 'serviceCategoryId', label: '服务类别', _showed: true },
           { key: 'serviceStock', label: '剩余服务库存', _showed: true },
-          { key: 'serviceStatus', label: '服务状态 （服务中、已结束）', _showed: true }
+          { key: 'serviceStatus', label: '服务状态', _showed: true }
         ]
       }
     }
@@ -171,12 +171,12 @@ export default {
         this.$notify.warning({ title: '警告', message: '请先选择一条数据' })
         return
       }
-      this.showData.title = '查看${field.fieldRemark}'
+      this.showData.title = '查看'
       this.showData.id = this.selectData.current.id
       this.showData.visiable = true
     },
     handleCreate() {
-      this.editData.title = '新增${field.fieldRemark}'
+      this.editData.title = '新增'
       this.editData.id = null
       this.editData.visiable = true
     },
@@ -185,7 +185,7 @@ export default {
         this.$notify.warning({ title: '警告', message: '请先选择一条数据' })
         return
       }
-      this.editData.title = '修改${field.fieldRemark}'
+      this.editData.title = '修改'
       this.editData.id = this.selectData.current.id
       this.editData.visiable = true
     },

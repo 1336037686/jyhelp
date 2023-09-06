@@ -14,26 +14,23 @@
         v-loading="initloading"
         :rules="rules"
         :model="form"
-        label-width="100px"
+        label-width="120px"
         element-loading-text="加载中，请稍后..."
         element-loading-spinner="el-icon-loading"
       >
-        <el-form-item label="ID：" prop="id">
-          <el-input v-model="form.id" />
-        </el-form-item>
         <el-form-item label="服务项目编号：" prop="serviceCode">
           <el-input v-model="form.serviceCode" />
         </el-form-item>
         <el-form-item label="用户ID：" prop="userId">
           <el-input v-model="form.userId" />
         </el-form-item>
-        <el-form-item label="服务类别 tb_service_category ID：" prop="serviceCategoryId">
+        <el-form-item label="服务类别：" prop="serviceCategoryId">
           <el-input v-model="form.serviceCategoryId" />
         </el-form-item>
         <el-form-item label="剩余服务库存：" prop="serviceStock">
           <el-input v-model="form.serviceStock" />
         </el-form-item>
-        <el-form-item label="服务状态 （服务中、已结束）：" prop="serviceStatus">
+        <el-form-item label="服务状态 ：" prop="serviceStatus">
           <el-input v-model="form.serviceStatus" />
         </el-form-item>
       </el-form>
@@ -90,13 +87,13 @@ export default {
           { required: true, message: '请输入用户ID', trigger: 'blur' }
         ],
         serviceCategoryId: [
-          { required: true, message: '请输入服务类别 tb_service_category ID', trigger: 'blur' }
+          { required: true, message: '请输入服务类别', trigger: 'blur' }
         ],
         serviceStock: [
           { required: true, message: '请输入剩余服务库存', trigger: 'blur' }
         ],
         serviceStatus: [
-          { required: true, message: '请输入服务状态 （服务中、已结束）', trigger: 'blur' }
+          { required: true, message: '请输入服务状态', trigger: 'blur' }
         ]
       }
     }

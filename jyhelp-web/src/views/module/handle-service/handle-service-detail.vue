@@ -16,19 +16,13 @@
       <el-descriptions :column="2" border>
         <el-descriptions-item>
           <template slot="label">
-            ID
-          </template>
-          {{ form.id }}
-        </el-descriptions-item>
-        <el-descriptions-item>
-          <template slot="label">
             服务记录编号
           </template>
           {{ form.handleCode }}
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">
-            会员服务ID customer_service id
+            会员服务ID
           </template>
           {{ form.customerServiceId }}
         </el-descriptions-item>

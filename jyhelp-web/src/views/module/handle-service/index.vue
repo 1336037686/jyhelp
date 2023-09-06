@@ -6,12 +6,12 @@
     element-loading-spinner="el-icon-loading"
   >
     <el-card class="box-card" shadow="always">
-      <el-form v-show="queryFormVisiable" :inline="true" size="mini" :model="queryForm" label-width="100px">
+      <el-form v-show="queryFormVisiable" :inline="true" size="mini" :model="queryForm" label-width="120px">
         <el-form-item label="服务记录编号：">
           <el-input v-model="queryForm.handleCode" placeholder="服务记录编号" />
         </el-form-item>
-        <el-form-item label="会员服务ID customer_service id：">
-          <el-input v-model="queryForm.customerServiceId" placeholder="会员服务ID customer_service id" />
+        <el-form-item label="会员服务ID：">
+          <el-input v-model="queryForm.customerServiceId" placeholder="会员服务ID" />
         </el-form-item>
         <el-form-item label="服务时间：">
           <el-input v-model="queryForm.handleTime" placeholder="服务时间" />
@@ -25,8 +25,8 @@
         <el-form-item label="服务附件：">
           <el-input v-model="queryForm.attachment" placeholder="服务附件" />
         </el-form-item>
-        <el-form-item label="服务状态 （已完成、进行中、待处理）：">
-          <el-input v-model="queryForm.handleStatus" placeholder="服务状态 （已完成、进行中、待处理）" />
+        <el-form-item label="服务状态：">
+          <el-input v-model="queryForm.handleStatus" placeholder="服务状态" />
         </el-form-item>
         <el-form-item label="用户反馈：">
           <el-input v-model="queryForm.userFeedback" placeholder="用户反馈" />
@@ -69,12 +69,12 @@
         <el-table-column type="index" width="80" label="序号" align="center" />
         <el-table-column v-if="checkColumnDisplayed('id', columnsData.columns)" prop="id" label="ID" align="center" show-overflow-tooltip />
         <el-table-column v-if="checkColumnDisplayed('handleCode', columnsData.columns)" prop="handleCode" label="服务记录编号" align="center" show-overflow-tooltip />
-        <el-table-column v-if="checkColumnDisplayed('customerServiceId', columnsData.columns)" prop="customerServiceId" label="会员服务ID customer_service id" align="center" show-overflow-tooltip />
+        <el-table-column v-if="checkColumnDisplayed('customerServiceId', columnsData.columns)" prop="customerServiceId" label="会员服务ID" align="center" show-overflow-tooltip />
         <el-table-column v-if="checkColumnDisplayed('handleTime', columnsData.columns)" prop="handleTime" label="服务时间" align="center" show-overflow-tooltip />
         <el-table-column v-if="checkColumnDisplayed('handleUser', columnsData.columns)" prop="handleUser" label="服务人员" align="center" show-overflow-tooltip />
         <el-table-column v-if="checkColumnDisplayed('handleRemark', columnsData.columns)" prop="handleRemark" label="服务记录" align="center" show-overflow-tooltip />
         <el-table-column v-if="checkColumnDisplayed('attachment', columnsData.columns)" prop="attachment" label="服务附件" align="center" show-overflow-tooltip />
-        <el-table-column v-if="checkColumnDisplayed('handleStatus', columnsData.columns)" prop="handleStatus" label="服务状态 （已完成、进行中、待处理）" align="center" show-overflow-tooltip />
+        <el-table-column v-if="checkColumnDisplayed('handleStatus', columnsData.columns)" prop="handleStatus" label="服务状态" align="center" show-overflow-tooltip />
         <el-table-column v-if="checkColumnDisplayed('userFeedback', columnsData.columns)" prop="userFeedback" label="用户反馈" align="center" show-overflow-tooltip />
       </el-table>
       <div style="text-align: center;margin-top: 10px">
@@ -150,7 +150,7 @@ export default {
           { key: 'handleUser', label: '服务人员', _showed: true },
           { key: 'handleRemark', label: '服务记录', _showed: true },
           { key: 'attachment', label: '服务附件', _showed: true },
-          { key: 'handleStatus', label: '服务状态 （已完成、进行中、待处理）', _showed: true },
+          { key: 'handleStatus', label: '服务状态', _showed: true },
           { key: 'userFeedback', label: '用户反馈', _showed: true }
         ]
       }
@@ -192,12 +192,12 @@ export default {
         this.$notify.warning({ title: '警告', message: '请先选择一条数据' })
         return
       }
-      this.showData.title = '查看${field.fieldRemark}'
+      this.showData.title = '查看'
       this.showData.id = this.selectData.current.id
       this.showData.visiable = true
     },
     handleCreate() {
-      this.editData.title = '新增${field.fieldRemark}'
+      this.editData.title = '新增'
       this.editData.id = null
       this.editData.visiable = true
     },
@@ -206,7 +206,7 @@ export default {
         this.$notify.warning({ title: '警告', message: '请先选择一条数据' })
         return
       }
-      this.editData.title = '修改${field.fieldRemark}'
+      this.editData.title = '修改'
       this.editData.id = this.selectData.current.id
       this.editData.visiable = true
     },

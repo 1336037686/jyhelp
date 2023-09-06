@@ -14,17 +14,14 @@
         v-loading="initloading"
         :rules="rules"
         :model="form"
-        label-width="100px"
+        label-width="120px"
         element-loading-text="加载中，请稍后..."
         element-loading-spinner="el-icon-loading"
       >
-        <el-form-item label="ID：" prop="id">
-          <el-input v-model="form.id" />
-        </el-form-item>
         <el-form-item label="服务记录编号：" prop="handleCode">
           <el-input v-model="form.handleCode" />
         </el-form-item>
-        <el-form-item label="会员服务ID customer_service id：" prop="customerServiceId">
+        <el-form-item label="会员服务ID：" prop="customerServiceId">
           <el-input v-model="form.customerServiceId" />
         </el-form-item>
         <el-form-item label="服务时间：" prop="handleTime">
@@ -39,7 +36,7 @@
         <el-form-item label="服务附件：" prop="attachment">
           <el-input v-model="form.attachment" />
         </el-form-item>
-        <el-form-item label="服务状态 （已完成、进行中、待处理）：" prop="handleStatus">
+        <el-form-item label="服务状态：" prop="handleStatus">
           <el-input v-model="form.handleStatus" />
         </el-form-item>
         <el-form-item label="用户反馈：" prop="userFeedback">
@@ -99,7 +96,7 @@ export default {
           { required: true, message: '请输入服务记录编号', trigger: 'blur' }
         ],
         customerServiceId: [
-          { required: true, message: '请输入会员服务ID customer_service id', trigger: 'blur' }
+          { required: true, message: '请输入会员服务ID', trigger: 'blur' }
         ],
         handleTime: [
           { required: true, message: '请输入服务时间', trigger: 'blur' }
@@ -114,7 +111,7 @@ export default {
           { required: true, message: '请输入服务附件', trigger: 'blur' }
         ],
         handleStatus: [
-          { required: true, message: '请输入服务状态 （已完成、进行中、待处理）', trigger: 'blur' }
+          { required: true, message: '请输入服务状态', trigger: 'blur' }
         ],
         userFeedback: [
           { required: true, message: '请输入用户反馈', trigger: 'blur' }
