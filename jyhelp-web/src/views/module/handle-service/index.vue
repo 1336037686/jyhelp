@@ -6,30 +6,29 @@
     element-loading-spinner="el-icon-loading"
   >
     <el-card class="box-card" shadow="always">
-      <el-form v-show="queryFormVisiable" :inline="true" size="mini" :model="queryForm" label-width="120px">
+      <el-form v-show="queryFormVisiable" :inline="true" size="mini" :model="queryForm" label-width="150px">
         <el-form-item label="服务记录编号：">
           <el-input v-model="queryForm.handleCode" placeholder="服务记录编号" />
         </el-form-item>
-        <el-form-item label="会员服务ID：">
-          <el-input v-model="queryForm.customerServiceId" placeholder="会员服务ID" />
+        <el-form-item label="会员服务编号：">
+          <el-input v-model="queryForm.serviceCode" placeholder="会员服务编号" />
         </el-form-item>
-        <el-form-item label="服务时间：">
-          <el-input v-model="queryForm.handleTime" placeholder="服务时间" />
+        <el-form-item label="服务人员账号：">
+          <el-input v-model="queryForm.handleUserName" placeholder="服务人员账号" />
         </el-form-item>
-        <el-form-item label="服务人员：">
-          <el-input v-model="queryForm.handleUser" placeholder="服务人员" />
+        <el-form-item label="服务人员名称：">
+          <el-input v-model="queryForm.handleUserNickname" placeholder="服务人员名称" />
         </el-form-item>
-        <el-form-item label="服务记录：">
-          <el-input v-model="queryForm.handleRemark" placeholder="服务记录" />
+        <el-form-item label="服务人员账号：">
+          <el-input v-model="queryForm.username" placeholder="服务人员账号" />
         </el-form-item>
-        <el-form-item label="服务附件：">
-          <el-input v-model="queryForm.attachment" placeholder="服务附件" />
+        <el-form-item label="服务人员名称：">
+          <el-input v-model="queryForm.nickname" placeholder="服务人员名称" />
         </el-form-item>
         <el-form-item label="服务状态：">
-          <el-input v-model="queryForm.handleStatus" placeholder="服务状态" />
-        </el-form-item>
-        <el-form-item label="用户反馈：">
-          <el-input v-model="queryForm.userFeedback" placeholder="用户反馈" />
+          <el-select v-model="queryForm.handleStatus" style="width: 90%">
+            <el-option v-for="(item, index) in handleServiceStatusOptions" :key="'handleStatus_' + index" :label="item.name" :value="item.code" />
+          </el-select>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" icon="el-icon-search" @click="handleQuery">查 询</el-button>
@@ -66,16 +65,26 @@
         @row-click="handleTableRowClick"
       >
         <el-table-column type="selection" width="55" align="center" />
-        <el-table-column type="index" width="80" label="序号" align="center" />
-        <el-table-column v-if="checkColumnDisplayed('id', columnsData.columns)" prop="id" label="ID" align="center" show-overflow-tooltip />
-        <el-table-column v-if="checkColumnDisplayed('handleCode', columnsData.columns)" prop="handleCode" label="服务记录编号" align="center" show-overflow-tooltip />
-        <el-table-column v-if="checkColumnDisplayed('customerServiceId', columnsData.columns)" prop="customerServiceId" label="会员服务ID" align="center" show-overflow-tooltip />
-        <el-table-column v-if="checkColumnDisplayed('handleTime', columnsData.columns)" prop="handleTime" label="服务时间" align="center" show-overflow-tooltip />
-        <el-table-column v-if="checkColumnDisplayed('handleUser', columnsData.columns)" prop="handleUser" label="服务人员" align="center" show-overflow-tooltip />
-        <el-table-column v-if="checkColumnDisplayed('handleRemark', columnsData.columns)" prop="handleRemark" label="服务记录" align="center" show-overflow-tooltip />
-        <el-table-column v-if="checkColumnDisplayed('attachment', columnsData.columns)" prop="attachment" label="服务附件" align="center" show-overflow-tooltip />
-        <el-table-column v-if="checkColumnDisplayed('handleStatus', columnsData.columns)" prop="handleStatus" label="服务状态" align="center" show-overflow-tooltip />
-        <el-table-column v-if="checkColumnDisplayed('userFeedback', columnsData.columns)" prop="userFeedback" label="用户反馈" align="center" show-overflow-tooltip />
+        <el-table-column type="index" width="80" label="序号" fixed align="center" />
+        <el-table-column v-if="checkColumnDisplayed('handleCode', columnsData.columns)" prop="handleCode" fixed label="服务处理编号" width="180" align="center" show-overflow-tooltip />
+        <el-table-column v-if="checkColumnDisplayed('serviceCode', columnsData.columns)" prop="serviceCode" fixed label="会员服务编号" width="180" align="center" show-overflow-tooltip />
+        <el-table-column v-if="checkColumnDisplayed('handleTime', columnsData.columns)" prop="handleTime" label="服务时间" width="180" align="center" show-overflow-tooltip />
+        <el-table-column v-if="checkColumnDisplayed('handleUserName', columnsData.columns)" prop="handleUserName" label="服务人员账号" width="180" align="center" show-overflow-tooltip />
+        <el-table-column v-if="checkColumnDisplayed('handleUserNickname', columnsData.columns)" prop="handleUserNickname" label="服务人员昵称" width="180" align="center" show-overflow-tooltip />
+        <el-table-column v-if="checkColumnDisplayed('username', columnsData.columns)" prop="username" label="会员账号" width="180" align="center" show-overflow-tooltip />
+        <el-table-column v-if="checkColumnDisplayed('nickname', columnsData.columns)" prop="nickname" label="会员昵称" width="180" align="center" show-overflow-tooltip />
+        <el-table-column v-if="checkColumnDisplayed('handleRemark', columnsData.columns)" prop="handleRemark" label="服务记录" width="180" align="center" show-overflow-tooltip />
+        <el-table-column v-if="checkColumnDisplayed('attachment', columnsData.columns)" prop="attachment" label="服务附件" width="100" align="center" show-overflow-tooltip />
+        <el-table-column v-if="checkColumnDisplayed('createTime', columnsData.columns)" prop="createTime" label="创建时间" width="180" align="center" />
+        <el-table-column v-if="checkColumnDisplayed('userScore', columnsData.columns)" prop="userScore" label="用户评分" width="180" align="center" show-overflow-tooltip />
+        <el-table-column v-if="checkColumnDisplayed('userFeedback', columnsData.columns)" prop="userFeedback" label="用户反馈" width="180" align="center" show-overflow-tooltip />
+        <el-table-column v-if="checkColumnDisplayed('handleStatus', columnsData.columns)" prop="handleStatus" label="服务状态" fixed="right" width="150" align="center" show-overflow-tooltip>
+          <template slot-scope="scope">
+            <el-tag v-if="scope.row.handleStatus === 'await'" size="mini" effect="plain" type="warning"> <i class="el-icon-success" /> {{ getNameByCode(handleServiceStatusOptions, scope.row.handleStatus) }}</el-tag>
+            <el-tag v-if="scope.row.handleStatus === 'completed'" size="mini" effect="plain" type="success"> <i class="el-icon-error" /> {{ getNameByCode(handleServiceStatusOptions, scope.row.handleStatus) }}</el-tag>
+            <el-tag v-if="scope.row.handleStatus === 'reject'" size="mini" effect="plain" type="danger"> <i class="el-icon-error" /> {{ getNameByCode(handleServiceStatusOptions, scope.row.handleStatus) }}</el-tag>
+          </template>
+        </el-table-column>
       </el-table>
       <div style="text-align: center;margin-top: 10px">
         <el-pagination
@@ -108,13 +117,13 @@ export default {
       queryFormVisiable: true,
       queryForm: {
         handleCode: null,
-        customerServiceId: null,
+        serviceCode: null,
         handleTime: null,
-        handleUser: null,
-        handleRemark: null,
-        attachment: null,
-        handleStatus: null,
-        userFeedback: null
+        handleUserName: null,
+        handleUserNickname: null,
+        username: null,
+        nickname: null,
+        handleStatus: null
       },
       tableData: {
         loading: false,
@@ -143,23 +152,34 @@ export default {
       columnsData: {
         visiable: false,
         columns: [
-          { key: 'id', label: 'ID', _showed: true },
-          { key: 'handleCode', label: '服务记录编号', _showed: true },
-          { key: 'customerServiceId', label: '会员服务ID customer_service id', _showed: true },
+          { key: 'handleCode', label: '服务处理编号', _showed: true },
+          { key: 'serviceCode', label: '会员服务编号', _showed: true },
           { key: 'handleTime', label: '服务时间', _showed: true },
-          { key: 'handleUser', label: '服务人员', _showed: true },
+          { key: 'handleUserName', label: '服务人员账号', _showed: true },
+          { key: 'handleUserNickname', label: '服务人员昵称', _showed: true },
+          { key: 'username', label: '会员账号', _showed: true },
+          { key: 'nickname', label: '会员昵称', _showed: true },
           { key: 'handleRemark', label: '服务记录', _showed: true },
           { key: 'attachment', label: '服务附件', _showed: true },
-          { key: 'handleStatus', label: '服务状态', _showed: true },
-          { key: 'userFeedback', label: '用户反馈', _showed: true }
+          { key: 'userScore', label: '用户评分', _showed: true },
+          { key: 'userFeedback', label: '用户反馈', _showed: true },
+          { key: 'createTime', label: '创建时间', _showed: true },
+          { key: 'handleStatus', label: '服务状态', _showed: true }
         ]
-      }
+      },
+      handleServiceStatusOptions: []
     }
   },
   created() {
+    this.getDict()
     this.getList()
   },
   methods: {
+    getDict() {
+      this.getDictByCode('module_handle_service_status').then(res => {
+        this.handleServiceStatusOptions = res.data
+      })
+    },
     getList() {
       this.tableData.loading = true
       const queryForm = { ...this.queryForm, pageNumber: this.tableData.pageNumber, pageSize: this.tableData.pageSize }
@@ -177,13 +197,13 @@ export default {
     },
     handleReset() {
       this.queryForm.handleCode = null
-      this.queryForm.customerServiceId = null
+      this.queryForm.serviceCode = null
       this.queryForm.handleTime = null
-      this.queryForm.handleUser = null
-      this.queryForm.handleRemark = null
-      this.queryForm.attachment = null
+      this.queryForm.handleUserName = null
+      this.queryForm.handleUserNickname = null
+      this.queryForm.username = null
+      this.queryForm.nickname = null
       this.queryForm.handleStatus = null
-      this.queryForm.userFeedback = null
       this.tableData.pageNumber = 1
       this.getList()
     },

@@ -29,7 +29,7 @@
         </el-form-item>
         <el-form-item label="服务类别：" prop="serviceCategoryId">
           <el-select v-model="form.serviceCategoryId" placeholder="请选择" style="width: 100%">
-            <el-option v-for="item in serviceCategoryOptions" :key="item.id" :label="item.name" :value="item.id" />
+            <el-option v-for="item in serviceCategoryOptions" :key="item.code" :label="item.name" :value="item.code" />
           </el-select>
         </el-form-item>
         <el-form-item label="剩余服务库存：" prop="serviceStock">

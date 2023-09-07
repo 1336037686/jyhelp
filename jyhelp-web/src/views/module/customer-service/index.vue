@@ -68,6 +68,7 @@
             {{ getNameByCode(serviceStatusOptions, scope.row.serviceStatus) }}
           </template>
         </el-table-column>
+        <el-table-column v-if="checkColumnDisplayed('createTime', columnsData.columns)" prop="createTime" label="创建时间" width="180" align="center" />
       </el-table>
       <div style="text-align: center;margin-top: 10px">
         <el-pagination
@@ -137,7 +138,8 @@ export default {
           { key: 'nickname', label: '昵称', _showed: true },
           { key: 'serviceCategoryName', label: '服务类别', _showed: true },
           { key: 'serviceStock', label: '剩余服务库存', _showed: true },
-          { key: 'serviceStatus', label: '服务状态', _showed: true }
+          { key: 'serviceStatus', label: '服务状态', _showed: true },
+          { key: 'createTime', label: '创建时间', _showed: true }
         ]
       },
       serviceStatusOptions: [],
