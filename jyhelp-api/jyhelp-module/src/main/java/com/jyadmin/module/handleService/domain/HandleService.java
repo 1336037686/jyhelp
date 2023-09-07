@@ -4,6 +4,9 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.jyadmin.domain.base.BaseEntity;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -35,20 +38,23 @@ public class HandleService extends BaseEntity implements Serializable {
     /**
      * 会员服务ID customer_service id
      */
+    @JsonSerialize(using = ToStringSerializer.class)
     @TableField(value = "customer_service_id")
     private Long customerServiceId;
 
     /**
      * 服务时间
      */
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
     @TableField(value = "handle_time")
     private LocalDateTime handleTime;
 
     /**
      * 服务人员
      */
+    @JsonSerialize(using = ToStringSerializer.class)
     @TableField(value = "handle_user")
-    private String handleUser;
+    private Long handleUser;
 
     /**
      * 服务记录
@@ -67,6 +73,12 @@ public class HandleService extends BaseEntity implements Serializable {
      */
     @TableField(value = "handle_status")
     private String handleStatus;
+
+    /**
+     * 用户评分
+     */
+    @TableField(value = "user_score")
+    private Integer userScore;
 
     /**
      * 用户反馈

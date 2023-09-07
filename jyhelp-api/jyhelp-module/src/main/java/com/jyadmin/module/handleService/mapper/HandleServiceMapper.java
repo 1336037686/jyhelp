@@ -1,8 +1,13 @@
 package com.jyadmin.module.handleService.mapper;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jyadmin.module.handleService.domain.HandleService;
+import com.jyadmin.module.handleService.model.dto.HandleServiceDTO;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 
 /**
@@ -15,6 +20,8 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface HandleServiceMapper extends BaseMapper<HandleService> {
+
+    Page<HandleServiceDTO> selectHandleServicePage(Page<HandleService> page, @Param(Constants.WRAPPER) LambdaQueryWrapper<HandleService> wrapper);
 
 }
 

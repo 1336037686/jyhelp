@@ -4,12 +4,14 @@ import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.jyadmin.consts.GlobalConstants;
 import com.jyadmin.domain.PageResult;
 import com.jyadmin.domain.Result;
 import com.jyadmin.annotation.Idempotent;
 import com.jyadmin.annotation.RateLimit;
 import com.jyadmin.module.customerService.domain.CustomerService;
 import com.jyadmin.module.handleService.domain.HandleService;
+import com.jyadmin.module.handleService.model.dto.HandleServiceDTO;
 import com.jyadmin.module.handleService.model.vo.HandleServiceCreateReqVO;
 import com.jyadmin.module.handleService.model.vo.HandleServiceQueryReqVO;
 import com.jyadmin.module.handleService.model.vo.HandleServiceUpdateReqVO;
@@ -79,18 +81,19 @@ public class HandleServiceController {
     @ApiOperation(value = "分页查询服务执行记录", notes = "")
     @GetMapping("/query")
     @PreAuthorize("@jy.check('handleService:query')")
-    public PageResult<HandleService> doQueryPage(HandleServiceQueryReqVO vo) {
+    public PageResult<HandleServiceDTO> doQueryPage(HandleServiceQueryReqVO vo) {
         return PageUtil.toPageResult(
-                this.handleServiceService.page(new Page<>(vo.getPageNumber(), vo.getPageSize()),
+                this.handleServiceService.getPage(new Page<>(vo.getPageNumber(), vo.getPageSize()),
                         new LambdaQueryWrapper<HandleService>()
                             .like(StringUtils.isNotBlank(vo.getHandleCode()), HandleService::getHandleCode, vo.getHandleCode())
-                            .eq(Objects.nonNull(vo.getCustomerServiceId()), HandleService::getCustomerServiceId, vo.getCustomerServiceId())
                             .eq(Objects.nonNull(vo.getHandleTime()), HandleService::getHandleTime, vo.getHandleTime())
-                            .eq(Objects.nonNull(vo.getHandleUser()), HandleService::getHandleUser, vo.getHandleUser())
-                            .eq(Objects.nonNull(vo.getHandleRemark()), HandleService::getHandleRemark, vo.getHandleRemark())
-                            .eq(Objects.nonNull(vo.getAttachment()), HandleService::getAttachment, vo.getAttachment())
                             .eq(Objects.nonNull(vo.getHandleStatus()), HandleService::getHandleStatus, vo.getHandleStatus())
-                            .eq(Objects.nonNull(vo.getUserFeedback()), HandleService::getUserFeedback, vo.getUserFeedback())
+                            .eq(HandleService::getDeleted, GlobalConstants.SysDeleted.EXIST.getValue())
+                            .apply(StringUtils.isNotBlank(vo.getServiceCode()), "service_code LIKE CONCAT('%',{0},'%')", vo.getServiceCode())
+                            .apply(StringUtils.isNotBlank(vo.getHandleUserName()), "handle_user_name LIKE CONCAT('%',{0},'%')", vo.getHandleUserName())
+                            .apply(StringUtils.isNotBlank(vo.getHandleUserNickname()), "handle_user_nickname LIKE CONCAT('%',{0},'%')", vo.getHandleUserNickname())
+                            .apply(StringUtils.isNotBlank(vo.getUsername()), "username LIKE CONCAT('%',{0},'%')", vo.getUsername())
+                            .apply(StringUtils.isNotBlank(vo.getNickname()), "nickname LIKE CONCAT('%',{0},'%')", vo.getNickname())
                             .orderByDesc(HandleService::getCreateTime)
                 )
         );

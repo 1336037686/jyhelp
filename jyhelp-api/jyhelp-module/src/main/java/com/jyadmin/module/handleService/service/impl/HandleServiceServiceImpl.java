@@ -1,8 +1,11 @@
 package com.jyadmin.module.handleService.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jyadmin.module.handleService.domain.HandleService;
 import com.jyadmin.module.handleService.mapper.HandleServiceMapper;
+import com.jyadmin.module.handleService.model.dto.HandleServiceDTO;
 import com.jyadmin.module.handleService.service.HandleServiceService;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +19,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class HandleServiceServiceImpl extends ServiceImpl<HandleServiceMapper, HandleService> implements HandleServiceService {
 
+    @Override
+    public Page<HandleServiceDTO> getPage(Page<HandleService> page, LambdaQueryWrapper<HandleService> wrapper) {
+        return this.baseMapper.selectHandleServicePage(page, wrapper);
+    }
 }
 
 
