@@ -69,6 +69,8 @@
           </template>
         </el-table-column>
         <el-table-column v-if="checkColumnDisplayed('createTime', columnsData.columns)" prop="createTime" label="创建时间" width="180" align="center" />
+        <el-table-column v-if="checkColumnDisplayed('sourceList', columnsData.columns)" prop="sourceList" label="来源明细" align="center" show-overflow-tooltip />
+        <el-table-column v-if="checkColumnDisplayed('serviceList', columnsData.columns)" prop="serviceList" label="服务记录" align="center" show-overflow-tooltip />
       </el-table>
       <div style="text-align: center;margin-top: 10px">
         <el-pagination
@@ -139,7 +141,9 @@ export default {
           { key: 'serviceCategoryName', label: '服务类别', _showed: true },
           { key: 'serviceStock', label: '剩余服务库存', _showed: true },
           { key: 'serviceStatus', label: '服务状态', _showed: true },
-          { key: 'createTime', label: '创建时间', _showed: true }
+          { key: 'createTime', label: '创建时间', _showed: true },
+          { key: 'sourceList', label: '来源明细', _showed: true },
+          { key: 'serviceList', label: '服务记录', _showed: true }
         ]
       },
       serviceStatusOptions: [],
