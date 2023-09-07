@@ -8,11 +8,13 @@ import com.jyadmin.domain.PageResult;
 import com.jyadmin.domain.Result;
 import com.jyadmin.annotation.Idempotent;
 import com.jyadmin.annotation.RateLimit;
+import com.jyadmin.module.customerService.domain.CustomerService;
 import com.jyadmin.module.handleService.domain.HandleService;
 import com.jyadmin.module.handleService.model.vo.HandleServiceCreateReqVO;
 import com.jyadmin.module.handleService.model.vo.HandleServiceQueryReqVO;
 import com.jyadmin.module.handleService.model.vo.HandleServiceUpdateReqVO;
 import com.jyadmin.module.handleService.service.HandleServiceService;
+import com.jyadmin.util.DataUtil;
 import com.jyadmin.util.PageUtil;
 import com.jyadmin.util.ResultUtil;
 import io.swagger.annotations.Api;
@@ -64,7 +66,7 @@ public class HandleServiceController {
     @DeleteMapping("/remove")
     @PreAuthorize("@jy.check('handleService:remove')")
     public Result<Object> doRemove(@RequestBody Set<String> ids) {
-        return ResultUtil.toResult(handleServiceService.removeByIds(ids));
+        return ResultUtil.toResult(handleServiceService.removeByIds(DataUtil.convertToLongForSet(ids)));
     }
 
     @ApiOperation(value = "根据ID获取当前服务执行记录", notes = "")
@@ -89,6 +91,7 @@ public class HandleServiceController {
                             .eq(Objects.nonNull(vo.getAttachment()), HandleService::getAttachment, vo.getAttachment())
                             .eq(Objects.nonNull(vo.getHandleStatus()), HandleService::getHandleStatus, vo.getHandleStatus())
                             .eq(Objects.nonNull(vo.getUserFeedback()), HandleService::getUserFeedback, vo.getUserFeedback())
+                            .orderByDesc(HandleService::getCreateTime)
                 )
         );
     }

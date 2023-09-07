@@ -14,6 +14,7 @@ import com.jyadmin.module.productCategory.model.vo.ProductCategoryCreateReqVO;
 import com.jyadmin.module.productCategory.model.vo.ProductCategoryQueryReqVO;
 import com.jyadmin.module.productCategory.model.vo.ProductCategoryUpdateReqVO;
 import com.jyadmin.module.productCategory.service.ProductCategoryService;
+import com.jyadmin.util.DataUtil;
 import com.jyadmin.util.PageUtil;
 import com.jyadmin.util.ResultUtil;
 import io.swagger.annotations.Api;
@@ -67,7 +68,7 @@ public class ProductCategoryController {
     @DeleteMapping("/remove")
     @PreAuthorize("@jy.check('productCategory:remove')")
     public Result<Object> doRemove(@RequestBody Set<String> ids) {
-        return ResultUtil.toResult(productCategoryService.removeByIds(ids));
+        return ResultUtil.toResult(productCategoryService.removeByIds(DataUtil.convertToLongForSet(ids)));
     }
 
     @ApiOperation(value = "根据ID获取当前商品类别", notes = "")
@@ -99,6 +100,7 @@ public class ProductCategoryController {
                             .like(StringUtils.isNotBlank(vo.getName()), ProductCategory::getName, vo.getName())
                             .like(StringUtils.isNotBlank(vo.getCode()), ProductCategory::getCode, vo.getCode())
                             .eq(Objects.nonNull(vo.getStatus()), ProductCategory::getStatus, vo.getStatus())
+                            .orderByDesc(ProductCategory::getCreateTime)
                 )
         );
     }

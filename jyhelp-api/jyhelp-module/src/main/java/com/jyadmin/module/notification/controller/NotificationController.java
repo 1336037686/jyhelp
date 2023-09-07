@@ -8,11 +8,13 @@ import com.jyadmin.domain.PageResult;
 import com.jyadmin.domain.Result;
 import com.jyadmin.annotation.Idempotent;
 import com.jyadmin.annotation.RateLimit;
+import com.jyadmin.module.handleService.domain.HandleService;
 import com.jyadmin.module.notification.domain.Notification;
 import com.jyadmin.module.notification.model.vo.NotificationCreateReqVO;
 import com.jyadmin.module.notification.model.vo.NotificationQueryReqVO;
 import com.jyadmin.module.notification.model.vo.NotificationUpdateReqVO;
 import com.jyadmin.module.notification.service.NotificationService;
+import com.jyadmin.util.DataUtil;
 import com.jyadmin.util.PageUtil;
 import com.jyadmin.util.ResultUtil;
 import io.swagger.annotations.Api;
@@ -64,7 +66,7 @@ public class NotificationController {
     @DeleteMapping("/remove")
     @PreAuthorize("@jy.check('Notification:remove')")
     public Result<Object> doRemove(@RequestBody Set<String> ids) {
-        return ResultUtil.toResult(NotificationService.removeByIds(ids));
+        return ResultUtil.toResult(NotificationService.removeByIds(DataUtil.convertToLongForSet(ids)));
     }
 
     @ApiOperation(value = "根据ID获取当前商城公告", notes = "")
@@ -85,6 +87,7 @@ public class NotificationController {
                             .eq(Objects.nonNull(vo.getTitle()), Notification::getTitle, vo.getTitle())
                             .eq(Objects.nonNull(vo.getPinned()), Notification::getPinned, vo.getPinned())
                             .eq(Objects.nonNull(vo.getStatus()), Notification::getStatus, vo.getStatus())
+                            .orderByDesc(Notification::getCreateTime)
                 )
         );
     }

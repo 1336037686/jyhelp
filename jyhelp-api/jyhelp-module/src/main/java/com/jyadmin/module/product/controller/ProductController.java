@@ -8,11 +8,13 @@ import com.jyadmin.domain.PageResult;
 import com.jyadmin.domain.Result;
 import com.jyadmin.annotation.Idempotent;
 import com.jyadmin.annotation.RateLimit;
+import com.jyadmin.module.order.domain.Order;
 import com.jyadmin.module.product.domain.Product;
 import com.jyadmin.module.product.model.vo.ProductCreateReqVO;
 import com.jyadmin.module.product.model.vo.ProductQueryReqVO;
 import com.jyadmin.module.product.model.vo.ProductUpdateReqVO;
 import com.jyadmin.module.product.service.ProductService;
+import com.jyadmin.util.DataUtil;
 import com.jyadmin.util.PageUtil;
 import com.jyadmin.util.ResultUtil;
 import io.swagger.annotations.Api;
@@ -64,7 +66,7 @@ public class ProductController {
     @DeleteMapping("/remove")
     @PreAuthorize("@jy.check('product:remove')")
     public Result<Object> doRemove(@RequestBody Set<String> ids) {
-        return ResultUtil.toResult(productService.removeByIds(ids));
+        return ResultUtil.toResult(productService.removeByIds(DataUtil.convertToLongForSet(ids)));
     }
 
     @ApiOperation(value = "根据ID获取当前商品表", notes = "")
@@ -87,6 +89,7 @@ public class ProductController {
                             .eq(Objects.nonNull(vo.getServiceCategoryId()), Product::getServiceCategoryId, vo.getServiceCategoryId())
                             .eq(Objects.nonNull(vo.getHot()), Product::getHot, vo.getHot())
                             .eq(Objects.nonNull(vo.getStatus()), Product::getStatus, vo.getStatus())
+                            .orderByDesc(Product::getCreateTime)
                 )
         );
     }

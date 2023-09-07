@@ -8,11 +8,13 @@ import com.jyadmin.domain.PageResult;
 import com.jyadmin.domain.Result;
 import com.jyadmin.annotation.Idempotent;
 import com.jyadmin.annotation.RateLimit;
+import com.jyadmin.module.product.domain.Product;
 import com.jyadmin.module.serviceCategory.domain.ServiceCategory;
 import com.jyadmin.module.serviceCategory.model.vo.ServiceCategoryCreateReqVO;
 import com.jyadmin.module.serviceCategory.model.vo.ServiceCategoryQueryReqVO;
 import com.jyadmin.module.serviceCategory.model.vo.ServiceCategoryUpdateReqVO;
 import com.jyadmin.module.serviceCategory.service.ServiceCategoryService;
+import com.jyadmin.util.DataUtil;
 import com.jyadmin.util.PageUtil;
 import com.jyadmin.util.ResultUtil;
 import io.swagger.annotations.Api;
@@ -65,7 +67,7 @@ public class ServiceCategoryController {
     @DeleteMapping("/remove")
     @PreAuthorize("@jy.check('serviceCategory:remove')")
     public Result<Object> doRemove(@RequestBody Set<String> ids) {
-        return ResultUtil.toResult(serviceCategoryService.removeByIds(ids));
+        return ResultUtil.toResult(serviceCategoryService.removeByIds(DataUtil.convertToLongForSet(ids)));
     }
 
     @ApiOperation(value = "根据ID获取当前服务类别", notes = "")
@@ -101,6 +103,7 @@ public class ServiceCategoryController {
                             .like(Objects.nonNull(vo.getCode()), ServiceCategory::getCode, vo.getCode())
                             .eq(Objects.nonNull(vo.getType()), ServiceCategory::getType, vo.getType())
                             .eq(Objects.nonNull(vo.getStatus()), ServiceCategory::getStatus, vo.getStatus())
+                            .orderByDesc(ServiceCategory::getCreateTime)
                 )
         );
     }

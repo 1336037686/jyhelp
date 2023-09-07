@@ -8,11 +8,13 @@ import com.jyadmin.domain.PageResult;
 import com.jyadmin.domain.Result;
 import com.jyadmin.annotation.Idempotent;
 import com.jyadmin.annotation.RateLimit;
+import com.jyadmin.module.notification.domain.Notification;
 import com.jyadmin.module.order.domain.Order;
 import com.jyadmin.module.order.model.vo.OrderCreateReqVO;
 import com.jyadmin.module.order.model.vo.OrderQueryReqVO;
 import com.jyadmin.module.order.model.vo.OrderUpdateReqVO;
 import com.jyadmin.module.order.service.OrderService;
+import com.jyadmin.util.DataUtil;
 import com.jyadmin.util.PageUtil;
 import com.jyadmin.util.ResultUtil;
 import io.swagger.annotations.Api;
@@ -64,7 +66,7 @@ public class OrderController {
     @DeleteMapping("/remove")
     @PreAuthorize("@jy.check('order:remove')")
     public Result<Object> doRemove(@RequestBody Set<String> ids) {
-        return ResultUtil.toResult(orderService.removeByIds(ids));
+        return ResultUtil.toResult(orderService.removeByIds(DataUtil.convertToLongForSet(ids)));
     }
 
     @ApiOperation(value = "根据ID获取当前用户订单", notes = "")
@@ -92,6 +94,7 @@ public class OrderController {
                             .eq(Objects.nonNull(vo.getOrderTime()), Order::getOrderTime, vo.getOrderTime())
                             .eq(Objects.nonNull(vo.getPaymentTime()), Order::getPaymentTime, vo.getPaymentTime())
                             .eq(Objects.nonNull(vo.getPeymentMethod()), Order::getPeymentMethod, vo.getPeymentMethod())
+                            .orderByDesc(Order::getCreateTime)
                 )
         );
     }

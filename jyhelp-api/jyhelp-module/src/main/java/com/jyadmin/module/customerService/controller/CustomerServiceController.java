@@ -4,6 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.jyadmin.consts.GlobalConstants;
 import com.jyadmin.domain.PageResult;
 import com.jyadmin.domain.Result;
 import com.jyadmin.annotation.Idempotent;
@@ -14,6 +15,7 @@ import com.jyadmin.module.customerService.model.vo.CustomerServiceCreateReqVO;
 import com.jyadmin.module.customerService.model.vo.CustomerServiceQueryReqVO;
 import com.jyadmin.module.customerService.model.vo.CustomerServiceUpdateReqVO;
 import com.jyadmin.module.customerService.service.CustomerServiceService;
+import com.jyadmin.util.DataUtil;
 import com.jyadmin.util.PageUtil;
 import com.jyadmin.util.ResultUtil;
 import io.swagger.annotations.Api;
@@ -66,7 +68,7 @@ public class CustomerServiceController {
     @DeleteMapping("/remove")
     @PreAuthorize("@jy.check('customerService:remove')")
     public Result<Object> doRemove(@RequestBody Set<String> ids) {
-        return ResultUtil.toResult(customerServiceService.removeByIds(ids));
+        return ResultUtil.toResult(customerServiceService.removeByIds(DataUtil.convertToLongForSet(ids)));
     }
 
     @ApiOperation(value = "根据ID获取当前会员服务", notes = "")
@@ -87,6 +89,7 @@ public class CustomerServiceController {
                         .eq(Objects.nonNull(vo.getServiceCategoryId()), CustomerService::getServiceCategoryId, vo.getServiceCategoryId())
                         .eq(Objects.nonNull(vo.getServiceStatus()), CustomerService::getServiceStatus, vo.getServiceStatus())
                         .apply(StringUtils.isNotBlank(vo.getUsername()), "username LIKE CONCAT('%',{0},'%')", vo.getUsername())
+                        .eq(CustomerService::getDeleted, GlobalConstants.SysDeleted.EXIST.getValue())
                         .orderByDesc(CustomerService::getCreateTime)
         ));
     }

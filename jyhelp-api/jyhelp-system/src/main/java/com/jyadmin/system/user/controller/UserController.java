@@ -141,7 +141,7 @@ public class UserController {
                         .eq(Objects.nonNull(vo.getStatus()), User::getStatus, vo.getStatus())
                         .eq(Objects.nonNull(vo.getDepartment()), User::getDepartment, vo.getDepartment())
                         .eq(Objects.nonNull(vo.getPost()), User::getPost, vo.getPost())
-                        .eq(true, User::getDeleted, GlobalConstants.SysDeleted.EXIST.getValue())
+                        .eq(User::getDeleted, GlobalConstants.SysDeleted.EXIST.getValue())
                         .exists(StringUtils.isNotBlank(vo.getRoles()),
                                 "SELECT 1 FROM tr_user_role tur INNER " +
                                         "JOIN sys_role sr ON sr.ID = tur.role_id " +
