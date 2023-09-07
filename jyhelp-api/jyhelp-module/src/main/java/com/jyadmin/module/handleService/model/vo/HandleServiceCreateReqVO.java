@@ -28,51 +28,34 @@ public class HandleServiceCreateReqVO implements Serializable {
     private String handleCode;
 
     /**
-     * 会员服务ID customer_service id
+     * 会员服务ID
      */
-    @ApiModelProperty(value = "会员服务ID customer_service id", name = "customerServiceId")
-    @NotNull(message = "会员服务ID customer_service id不能为空")
+    @ApiModelProperty(value = "会员服务ID", name = "customerServiceId")
+    @NotNull(message = "会员服务ID不能为空")
     private Long customerServiceId;
-
-    /**
-     * 服务时间
-     */
-    @ApiModelProperty(value = "服务时间", name = "handleTime")
-    @NotNull(message = "服务时间不能为空")
-    private LocalDateTime handleTime;
-
-    /**
-     * 服务人员
-     */
-    @ApiModelProperty(value = "服务人员", name = "handleUser")
-    @NotBlank(message = "服务人员不能为空")
-    private String handleUser;
 
     /**
      * 服务记录
      */
     @ApiModelProperty(value = "服务记录", name = "handleRemark")
-    @NotBlank(message = "服务记录不能为空")
     private String handleRemark;
 
     /**
      * 服务附件
      */
     @ApiModelProperty(value = "服务附件", name = "attachment")
-    @NotBlank(message = "服务附件不能为空")
     private String attachment;
 
     /**
      * 服务状态 （已完成、进行中、待处理）
      */
-    @ApiModelProperty(value = "服务状态 （已完成、进行中、待处理）", name = "handleStatus")
-    @NotBlank(message = "服务状态 （已完成、进行中、待处理）不能为空")
+    @ApiModelProperty(value = "服务状态", name = "handleStatus")
+    @NotBlank(message = "服务状态不能为空")
     private String handleStatus;
 
     /**
      * 用户反馈
      */
     @ApiModelProperty(value = "用户反馈", name = "userFeedback")
-    @NotBlank(message = "用户反馈不能为空")
     private String userFeedback;
 }

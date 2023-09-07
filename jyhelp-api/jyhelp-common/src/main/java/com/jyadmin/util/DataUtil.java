@@ -2,12 +2,10 @@ package com.jyadmin.util;
 
 import cn.hutool.core.map.MapUtil;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.formula.functions.T;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -55,6 +53,14 @@ public class DataUtil {
     public static Set<Long> convertToLongForSet(Set<String> ids) {
         if (CollectionUtils.isEmpty(ids)) return new HashSet<>();
         return ids.stream().map(Long::parseLong).collect(Collectors.toSet());
+    }
+
+    /**
+     * 将String类型的ID集合转换为Long
+     */
+    public static Set<Long> convertToLongForSet(String ids) {
+        if (StringUtils.isBlank(ids)) return new HashSet<>();
+        return Arrays.stream(ids.split(",")).map(Long::parseLong).collect(Collectors.toSet());
     }
 
 }

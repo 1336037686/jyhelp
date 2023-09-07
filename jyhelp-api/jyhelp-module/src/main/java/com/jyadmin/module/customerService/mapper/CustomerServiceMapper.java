@@ -9,6 +9,8 @@ import com.jyadmin.module.customerService.model.dto.CustomerServiceDTO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 
 /**
  * 会员服务表 Mapper <br>
@@ -23,6 +25,7 @@ public interface CustomerServiceMapper extends BaseMapper<CustomerService> {
 
     Page<CustomerServiceDTO> selectCustomerServicePage(Page<CustomerService> page, @Param(Constants.WRAPPER) LambdaQueryWrapper<? extends CustomerService> wrapper);
 
+    List<CustomerServiceDTO> selectCustomerServiceList(@Param(Constants.WRAPPER) LambdaQueryWrapper<CustomerService> wrapper);
 }
 
 

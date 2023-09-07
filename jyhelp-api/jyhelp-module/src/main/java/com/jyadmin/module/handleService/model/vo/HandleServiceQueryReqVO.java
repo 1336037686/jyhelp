@@ -52,9 +52,9 @@ public class HandleServiceQueryReqVO extends BasePageVO implements Serializable 
 
 
     /**
-     * 服务状态 （已完成、进行中、待处理）
+     * 服务状态
      */
-    @ApiModelProperty(value = "服务状态 （已完成、进行中、待处理）", name = "handleStatus")
+    @ApiModelProperty(value = "服务状态", name = "handleStatus")
     private String handleStatus;
 
     /**

@@ -78,6 +78,20 @@ public class CustomerServiceController {
         return Result.ok(customerServiceService.getById(id));
     }
 
+    @ApiOperation(value = "列表查询会员服务", notes = "")
+    @GetMapping("/list")
+    @PreAuthorize("@jy.check('customerService:list')")
+    public Result<List<CustomerServiceDTO>> doQueryList(CustomerServiceQueryReqVO vo) {
+        return Result.ok(this.customerServiceService.getList(new LambdaQueryWrapper<CustomerService>()
+                .like(StringUtils.isNotBlank(vo.getServiceCode()), CustomerService::getServiceCode, vo.getServiceCode())
+                .eq(Objects.nonNull(vo.getUserId()), CustomerService::getUserId, vo.getUserId())
+                .eq(Objects.nonNull(vo.getServiceCategoryId()), CustomerService::getServiceCategoryId, vo.getServiceCategoryId())
+                .eq(Objects.nonNull(vo.getServiceStatus()), CustomerService::getServiceStatus, vo.getServiceStatus())
+                .apply(StringUtils.isNotBlank(vo.getUsername()), "username LIKE CONCAT('%',{0},'%')", vo.getUsername())
+                .eq(CustomerService::getDeleted, GlobalConstants.SysDeleted.EXIST.getValue())
+                .orderByDesc(CustomerService::getCreateTime)));
+    }
+
     @ApiOperation(value = "分页查询会员服务", notes = "")
     @GetMapping("/query")
     @PreAuthorize("@jy.check('customerService:query')")

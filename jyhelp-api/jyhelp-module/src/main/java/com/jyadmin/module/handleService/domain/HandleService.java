@@ -1,9 +1,6 @@
 package com.jyadmin.module.handleService.domain;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
@@ -65,7 +62,7 @@ public class HandleService extends BaseEntity implements Serializable {
     /**
      * 服务附件
      */
-    @TableField(value = "attachment")
+    @TableField(value = "attachment", updateStrategy=FieldStrategy.IGNORED)
     private String attachment;
 
     /**
@@ -90,6 +87,7 @@ public class HandleService extends BaseEntity implements Serializable {
      * 版本
      */
     @TableField(value = "version")
+    @Version
     private Long version;
 
     @TableField(exist = false)

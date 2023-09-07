@@ -1,4 +1,5 @@
 package com.jyadmin.module.handleService.controller;
+import java.time.LocalDateTime;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -10,15 +11,21 @@ import com.jyadmin.domain.Result;
 import com.jyadmin.annotation.Idempotent;
 import com.jyadmin.annotation.RateLimit;
 import com.jyadmin.module.customerService.domain.CustomerService;
+import com.jyadmin.module.customerService.service.CustomerServiceService;
 import com.jyadmin.module.handleService.domain.HandleService;
 import com.jyadmin.module.handleService.model.dto.HandleServiceDTO;
 import com.jyadmin.module.handleService.model.vo.HandleServiceCreateReqVO;
 import com.jyadmin.module.handleService.model.vo.HandleServiceQueryReqVO;
 import com.jyadmin.module.handleService.model.vo.HandleServiceUpdateReqVO;
 import com.jyadmin.module.handleService.service.HandleServiceService;
+import com.jyadmin.module.serviceCategory.domain.ServiceCategory;
+import com.jyadmin.module.serviceCategory.service.ServiceCategoryService;
+import com.jyadmin.system.user.domain.User;
+import com.jyadmin.system.user.service.UserService;
 import com.jyadmin.util.DataUtil;
 import com.jyadmin.util.PageUtil;
 import com.jyadmin.util.ResultUtil;
+import com.jyadmin.util.SecurityUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -45,13 +52,21 @@ public class HandleServiceController {
 
     @Resource
     private HandleServiceService handleServiceService;
+    @Resource
+    private UserService userService;
+    @Resource
+    private CustomerServiceService customerServiceService;
 
     @RateLimit @Idempotent
     @ApiOperation(value = "新增服务执行记录", notes = "")
     @PostMapping("/create")
     @PreAuthorize("@jy.check('handleService:create')")
     public Result<Object> doCreate(@RequestBody @Valid HandleServiceCreateReqVO vo) {
-        return ResultUtil.toResult(handleServiceService.save(BeanUtil.copyProperties(vo, HandleService.class)));
+        HandleService handleService = BeanUtil.copyProperties(vo, HandleService.class);
+        handleService.setHandleTime(LocalDateTime.now());
+        handleService.setHandleUser(SecurityUtil.getCurrentUserId());
+        handleService.setUserScore(0);
+        return ResultUtil.toResult(handleServiceService.save(handleService));
     }
 
     @RateLimit @Idempotent
@@ -75,7 +90,17 @@ public class HandleServiceController {
     @GetMapping("/query/{id}")
     @PreAuthorize("@jy.check('handleService:queryById')")
     public Result<Object> doQueryById(@PathVariable String id) {
-        return Result.ok(handleServiceService.getById(id));
+        HandleService handleService = handleServiceService.getById(id);
+        User handlerUser = userService.getById(handleService.getHandleUser());
+        CustomerService customerService = customerServiceService.getById(handleService.getCustomerServiceId());
+        User user = userService.getById(customerService.getUserId());
+        HandleServiceDTO handleServiceDTO = BeanUtil.copyProperties(handleService, HandleServiceDTO.class);
+        handleServiceDTO.setHandleUserName(handlerUser.getUsername());
+        handleServiceDTO.setHandleUserNickname(handlerUser.getNickname());
+        handleServiceDTO.setServiceCode(customerService.getServiceCode());
+        handleServiceDTO.setUsername(user.getUsername());
+        handleServiceDTO.setNickname(user.getNickname());
+        return Result.ok(handleServiceDTO);
     }
 
     @ApiOperation(value = "分页查询服务执行记录", notes = "")

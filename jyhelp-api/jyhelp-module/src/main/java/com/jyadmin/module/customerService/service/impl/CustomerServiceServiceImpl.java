@@ -40,6 +40,11 @@ public class CustomerServiceServiceImpl extends ServiceImpl<CustomerServiceMappe
     }
 
     @Override
+    public List<CustomerServiceDTO> getList(LambdaQueryWrapper<CustomerService> wrapper) {
+        return this.baseMapper.selectCustomerServiceList(wrapper);
+    }
+
+    @Override
     public CustomerServiceDTO getById(Serializable id) {
         CustomerService customerService = super.getById(id);
         CustomerServiceDTO customerServiceDTO = new CustomerServiceDTO();

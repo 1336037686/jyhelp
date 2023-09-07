@@ -20,4 +20,6 @@ public interface CustomerServiceService extends IService<CustomerService> {
 
     Page<CustomerServiceDTO> getPage(Page<CustomerService> result, LambdaQueryWrapper<CustomerService> wrapper);
 
+    List<CustomerServiceDTO> getList(LambdaQueryWrapper<CustomerService> wrapper);
+
 }

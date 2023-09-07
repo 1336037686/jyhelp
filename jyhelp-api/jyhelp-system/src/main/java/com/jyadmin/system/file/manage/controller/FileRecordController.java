@@ -58,6 +58,16 @@ public class FileRecordController {
         return Result.ok(fileRecord);
     }
 
+    @ApiOperation(value = "根据IDs获取当前附件记录信息", notes = "")
+    @GetMapping("/query-multiple/{ids}")
+    @PreAuthorize("@jy.check('file-record:queryByIds')")
+    public Result<List<FileRecord>> doQueryByIds(@PathVariable String ids) {
+        List<FileRecord> fileRecords = fileRecordService.list(
+                new LambdaQueryWrapper<FileRecord>().in(FileRecord::getId, DataUtil.convertToLongForSet(ids))
+        );
+        return Result.ok(fileRecords);
+    }
+
     @ApiOperation(value = "列表查询附件记录", notes = "")
     @GetMapping("/list")
     @PreAuthorize("@jy.check('file-record:list')")
