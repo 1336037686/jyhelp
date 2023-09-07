@@ -10,17 +10,18 @@
         <el-form-item label="服务项目编号：">
           <el-input v-model="queryForm.serviceCode" placeholder="服务项目编号" />
         </el-form-item>
-        <el-form-item label="用户ID：">
-          <el-input v-model="queryForm.userId" placeholder="用户ID" />
+        <el-form-item label="用户名：">
+          <el-input v-model="queryForm.username" placeholder="用户名" />
         </el-form-item>
         <el-form-item label="服务类别：">
-          <el-input v-model="queryForm.serviceCategoryId" placeholder="服务类别" />
-        </el-form-item>
-        <el-form-item label="剩余服务库存：">
-          <el-input v-model="queryForm.serviceStock" placeholder="剩余服务库存" />
+          <el-select v-model="queryForm.serviceCategoryId" placeholder="服务类别" style="width: 100%">
+            <el-option v-for="item in serviceCategoryOptions" :key="item.code" :label="item.name" :value="item.code" />
+          </el-select>
         </el-form-item>
         <el-form-item label="服务状态：">
-          <el-input v-model="queryForm.serviceStatus" placeholder="服务状态" />
+          <el-select v-model="queryForm.serviceStatus" style="width: 100%">
+            <el-option v-for="(item, index) in serviceStatusOptions" :key="'serviceStatus_' + index" :label="item.name" :value="item.code" />
+          </el-select>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" icon="el-icon-search" @click="handleQuery">查 询</el-button>
@@ -29,7 +30,6 @@
       </el-form>
       <div style="margin-top: 5px">
         <el-button type="primary" icon="el-icon-view" size="mini" @click="handleShow">查 看</el-button>
-        <el-button type="success" icon="el-icon-plus" size="mini" @click="handleCreate">新 增</el-button>
         <el-button type="warning" icon="el-icon-edit-outline" size="mini" @click="handleUpdate">修 改</el-button>
         <el-button type="danger" icon="el-icon-delete" size="mini" @click="handleRemove">删 除</el-button>
       </div>
@@ -58,12 +58,16 @@
       >
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column type="index" width="80" label="序号" align="center" />
-        <el-table-column v-if="checkColumnDisplayed('id', columnsData.columns)" prop="id" label="ID" align="center" show-overflow-tooltip />
         <el-table-column v-if="checkColumnDisplayed('serviceCode', columnsData.columns)" prop="serviceCode" label="服务项目编号" align="center" show-overflow-tooltip />
-        <el-table-column v-if="checkColumnDisplayed('userId', columnsData.columns)" prop="userId" label="用户ID" align="center" show-overflow-tooltip />
-        <el-table-column v-if="checkColumnDisplayed('serviceCategoryId', columnsData.columns)" prop="serviceCategoryId" label="服务类别" align="center" show-overflow-tooltip />
+        <el-table-column v-if="checkColumnDisplayed('username', columnsData.columns)" prop="username" label="用户名" align="center" show-overflow-tooltip />
+        <el-table-column v-if="checkColumnDisplayed('nickname', columnsData.columns)" prop="nickname" label="昵称" align="center" show-overflow-tooltip />
+        <el-table-column v-if="checkColumnDisplayed('serviceCategoryName', columnsData.columns)" prop="serviceCategoryName" label="服务类别" align="center" show-overflow-tooltip />
         <el-table-column v-if="checkColumnDisplayed('serviceStock', columnsData.columns)" prop="serviceStock" label="剩余服务库存" align="center" show-overflow-tooltip />
-        <el-table-column v-if="checkColumnDisplayed('serviceStatus', columnsData.columns)" prop="serviceStatus" label="服务状态" align="center" show-overflow-tooltip />
+        <el-table-column v-if="checkColumnDisplayed('serviceStatus', columnsData.columns)" prop="serviceStatus" label="服务状态" align="center" show-overflow-tooltip>
+          <template slot-scope="scope">
+            {{ getNameByCode(serviceStatusOptions, scope.row.serviceStatus) }}
+          </template>
+        </el-table-column>
       </el-table>
       <div style="text-align: center;margin-top: 10px">
         <el-pagination
@@ -88,6 +92,7 @@ import customerServiceApi from '@/api/module/customer-service/customer-service-a
 import CustomerServiceForm from '@/views/module/customer-service/customer-service-form'
 import CustomerServiceDetail from '@/views/module/customer-service/customer-service-detail'
 import SelectColumns from '@/components/SelectColumns'
+import serviceCategoryApi from '@/api/module/service-category/service-category-api'
 export default {
   components: { SelectColumns, CustomerServiceDetail, CustomerServiceForm },
   data() {
@@ -96,9 +101,8 @@ export default {
       queryFormVisiable: true,
       queryForm: {
         serviceCode: null,
-        userId: null,
+        username: null,
         serviceCategoryId: null,
-        serviceStock: null,
         serviceStatus: null
       },
       tableData: {
@@ -128,20 +132,34 @@ export default {
       columnsData: {
         visiable: false,
         columns: [
-          { key: 'id', label: 'ID', _showed: true },
           { key: 'serviceCode', label: '服务项目编号', _showed: true },
-          { key: 'userId', label: '用户ID', _showed: true },
-          { key: 'serviceCategoryId', label: '服务类别', _showed: true },
+          { key: 'username', label: '用户名', _showed: true },
+          { key: 'nickname', label: '昵称', _showed: true },
+          { key: 'serviceCategoryName', label: '服务类别', _showed: true },
           { key: 'serviceStock', label: '剩余服务库存', _showed: true },
           { key: 'serviceStatus', label: '服务状态', _showed: true }
         ]
-      }
+      },
+      serviceStatusOptions: [],
+      serviceCategoryOptions: []
     }
   },
   created() {
+    this.getDict()
     this.getList()
   },
   methods: {
+    getDict() {
+      serviceCategoryApi.list({ status: 1 }).then(res => {
+        this.serviceCategoryOptions = []
+        for (let i = 0; i < res.data.length; i++) {
+          this.serviceCategoryOptions.push({ code: res.data[i].id, name: res.data[i].name })
+        }
+      })
+      this.getDictByCode('module_service_status').then(res => {
+        this.serviceStatusOptions = res.data
+      })
+    },
     getList() {
       this.tableData.loading = true
       const queryForm = { ...this.queryForm, pageNumber: this.tableData.pageNumber, pageSize: this.tableData.pageSize }
@@ -174,11 +192,6 @@ export default {
       this.showData.title = '查看'
       this.showData.id = this.selectData.current.id
       this.showData.visiable = true
-    },
-    handleCreate() {
-      this.editData.title = '新增'
-      this.editData.id = null
-      this.editData.visiable = true
     },
     handleUpdate() {
       if (!this.selectData.current) {

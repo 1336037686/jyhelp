@@ -22,15 +22,21 @@
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">
-            用户ID
+            用户名
           </template>
-          {{ form.userId }}
+          {{ form.username }}
+        </el-descriptions-item>
+        <el-descriptions-item>
+          <template slot="label">
+            昵称
+          </template>
+          {{ form.nickname }}
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">
             服务类别
           </template>
-          {{ form.serviceCategoryId }}
+          {{ form.serviceCategoryName }}
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">
@@ -40,9 +46,9 @@
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">
-            服务状态 （服务中、已结束）
+            服务状态
           </template>
-          {{ form.serviceStatus }}
+          {{ getNameByCode(serviceStatusOptions, form.serviceStatus) }}
         </el-descriptions-item>
       </el-descriptions>
     </div>
@@ -78,10 +84,14 @@ export default {
         id: null,
         serviceCode: null,
         userId: null,
+        username: null,
+        nickname: null,
         serviceCategoryId: null,
+        serviceCategoryName: null,
         serviceStock: null,
         serviceStatus: null
-      }
+      },
+      serviceStatusOptions: []
     }
   },
   watch: {
@@ -96,7 +106,15 @@ export default {
     },
     deep: true
   },
+  created() {
+    this.getDict()
+  },
   methods: {
+    getDict() {
+      this.getDictByCode('module_service_status').then(res => {
+        this.serviceStatusOptions = res.data
+      })
+    },
     getById(id) {
       this.initloading = true
       customerServiceApi.getById(id).then(response => {
