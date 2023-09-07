@@ -9,6 +9,7 @@ import com.jyadmin.domain.Result;
 import com.jyadmin.annotation.Idempotent;
 import com.jyadmin.annotation.RateLimit;
 import com.jyadmin.module.customerService.domain.CustomerService;
+import com.jyadmin.module.customerService.model.dto.CustomerServiceDTO;
 import com.jyadmin.module.customerService.model.vo.CustomerServiceCreateReqVO;
 import com.jyadmin.module.customerService.model.vo.CustomerServiceQueryReqVO;
 import com.jyadmin.module.customerService.model.vo.CustomerServiceUpdateReqVO;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -77,16 +79,15 @@ public class CustomerServiceController {
     @ApiOperation(value = "分页查询会员服务", notes = "")
     @GetMapping("/query")
     @PreAuthorize("@jy.check('customerService:query')")
-    public PageResult<CustomerService> doQueryPage(CustomerServiceQueryReqVO vo) {
-        return PageUtil.toPageResult(
-                this.customerServiceService.page(new Page<>(vo.getPageNumber(), vo.getPageSize()),
-                        new LambdaQueryWrapper<CustomerService>()
-                            .eq(Objects.nonNull(vo.getServiceCode()), CustomerService::getServiceCode, vo.getServiceCode())
-                            .eq(Objects.nonNull(vo.getUserId()), CustomerService::getUserId, vo.getUserId())
-                            .eq(Objects.nonNull(vo.getServiceCategoryId()), CustomerService::getServiceCategoryId, vo.getServiceCategoryId())
-                            .eq(Objects.nonNull(vo.getServiceStock()), CustomerService::getServiceStock, vo.getServiceStock())
-                            .eq(Objects.nonNull(vo.getServiceStatus()), CustomerService::getServiceStatus, vo.getServiceStatus())
-                )
-        );
+    public PageResult<CustomerServiceDTO> doQueryPage(CustomerServiceQueryReqVO vo) {
+        return PageUtil.toPageResult(this.customerServiceService.getPage(new Page<>(vo.getPageNumber(), vo.getPageSize()),
+                new LambdaQueryWrapper<CustomerService>()
+                        .like(StringUtils.isNotBlank(vo.getServiceCode()), CustomerService::getServiceCode, vo.getServiceCode())
+                        .eq(Objects.nonNull(vo.getUserId()), CustomerService::getUserId, vo.getUserId())
+                        .eq(Objects.nonNull(vo.getServiceCategoryId()), CustomerService::getServiceCategoryId, vo.getServiceCategoryId())
+                        .eq(Objects.nonNull(vo.getServiceStatus()), CustomerService::getServiceStatus, vo.getServiceStatus())
+                        .apply(StringUtils.isNotBlank(vo.getUsername()), "username LIKE CONCAT('%',{0},'%')", vo.getUsername())
+                        .orderByDesc(CustomerService::getCreateTime)
+        ));
     }
 }

@@ -31,16 +31,16 @@ public class CustomerServiceQueryReqVO extends BasePageVO implements Serializabl
     private Long userId;
 
     /**
+     * 用户名
+     */
+    @ApiModelProperty(value = "用户名", name = "username")
+    private String username;
+
+    /**
      * 服务类别 tb_service_category ID
      */
     @ApiModelProperty(value = "服务类别 tb_service_category ID", name = "serviceCategoryId")
     private Long serviceCategoryId;
-
-    /**
-     * 剩余服务库存
-     */
-    @ApiModelProperty(value = "剩余服务库存", name = "serviceStock")
-    private String serviceStock;
 
     /**
      * 服务状态 （服务中、已结束）

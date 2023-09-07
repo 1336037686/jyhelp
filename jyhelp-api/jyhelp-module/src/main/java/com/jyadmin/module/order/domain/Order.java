@@ -1,6 +1,8 @@
 package com.jyadmin.module.order.domain;
 
 import com.baomidou.mybatisplus.annotation.*;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.jyadmin.domain.base.BaseEntity;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -33,6 +35,7 @@ public class Order extends BaseEntity implements Serializable {
     /**
      * 商品ID
      */
+    @JsonSerialize(using = ToStringSerializer.class)
     @TableField(value = "product_id")
     private Long productId;
 
@@ -45,6 +48,7 @@ public class Order extends BaseEntity implements Serializable {
     /**
      * 购买用户ID
      */
+    @JsonSerialize(using = ToStringSerializer.class)
     @TableField(value = "user_id")
     private Integer userId;
 

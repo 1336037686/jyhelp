@@ -30,4 +30,11 @@
         update_time,
         deleted
     </sql>
+    <select id="selectCustomerServicePage" resultType="com.jyadmin.module.customerService.model.dto.CustomerServiceDTO">
+        SELECT * FROM (
+            SELECT tcs.*, su.username "username", su.nickname "nickname", tsc.name "service_category_name" FROM tb_customer_service tcs
+            INNER JOIN sys_user su ON su.id = tcs.user_id
+            INNER JOIN tb_service_category tsc ON tsc.id = tcs.service_category_id
+        ) t ${ew.customSqlSegment}
+    </select>
 </mapper>

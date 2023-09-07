@@ -1,6 +1,8 @@
 package com.jyadmin.module.customerService.domain;
 
 import com.baomidou.mybatisplus.annotation.*;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.jyadmin.domain.base.BaseEntity;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -31,12 +33,14 @@ public class CustomerService extends BaseEntity implements Serializable {
     /**
      * 用户ID
      */
+    @JsonSerialize(using = ToStringSerializer.class)
     @TableField(value = "user_id")
     private Long userId;
 
     /**
      * 服务类别 tb_service_category ID
      */
+    @JsonSerialize(using = ToStringSerializer.class)
     @TableField(value = "service_category_id")
     private Long serviceCategoryId;
 
