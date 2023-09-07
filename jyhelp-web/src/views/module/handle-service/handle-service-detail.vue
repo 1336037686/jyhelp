@@ -22,9 +22,9 @@
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">
-            会员服务ID
+            会员服务编号
           </template>
-          {{ form.customerServiceId }}
+          {{ form.serviceCode }}
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">
@@ -34,9 +34,15 @@
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">
-            服务人员
+            服务人员账号
           </template>
-          {{ form.handleUser }}
+          {{ form.handleUserName }}
+        </el-descriptions-item>
+        <el-descriptions-item>
+          <template slot="label">
+            服务人员名称
+          </template>
+          {{ form.handleUserNickname }}
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">
@@ -46,15 +52,29 @@
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">
-            服务附件
+            会员账号
           </template>
-          {{ form.attachment }}
+          {{ form.username }}
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">
-            服务状态 （已完成、进行中、待处理）
+            会员昵称
           </template>
-          {{ form.handleStatus }}
+          {{ form.nickname }}
+        </el-descriptions-item>
+        <el-descriptions-item>
+          <template slot="label">
+            服务状态
+          </template>
+          <el-tag v-if="form.handleStatus === 'await'" size="mini" effect="plain" type="warning"> <i class="el-icon-success" /> {{ getNameByCode(handleServiceStatusOptions, form.handleStatus) }}</el-tag>
+          <el-tag v-if="form.handleStatus === 'completed'" size="mini" effect="plain" type="success"> <i class="el-icon-error" /> {{ getNameByCode(handleServiceStatusOptions, form.handleStatus) }}</el-tag>
+          <el-tag v-if="form.handleStatus === 'reject'" size="mini" effect="plain" type="danger"> <i class="el-icon-error" /> {{ getNameByCode(handleServiceStatusOptions, form.handleStatus) }}</el-tag>
+        </el-descriptions-item>
+        <el-descriptions-item>
+          <template slot="label">
+            用户评分
+          </template>
+          <el-rate v-model="form.userScore" disabled />
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">
@@ -102,7 +122,8 @@ export default {
         attachment: null,
         handleStatus: null,
         userFeedback: null
-      }
+      },
+      handleServiceStatusOptions: []
     }
   },
   watch: {
@@ -117,7 +138,15 @@ export default {
     },
     deep: true
   },
+  created() {
+    this.getDict()
+  },
   methods: {
+    getDict() {
+      this.getDictByCode('module_handle_service_status').then(res => {
+        this.handleServiceStatusOptions = res.data
+      })
+    },
     getById(id) {
       this.initloading = true
       handleServiceApi.getById(id).then(response => {

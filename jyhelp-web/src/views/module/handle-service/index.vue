@@ -74,9 +74,17 @@
         <el-table-column v-if="checkColumnDisplayed('username', columnsData.columns)" prop="username" label="会员账号" width="180" align="center" show-overflow-tooltip />
         <el-table-column v-if="checkColumnDisplayed('nickname', columnsData.columns)" prop="nickname" label="会员昵称" width="180" align="center" show-overflow-tooltip />
         <el-table-column v-if="checkColumnDisplayed('handleRemark', columnsData.columns)" prop="handleRemark" label="服务记录" width="180" align="center" show-overflow-tooltip />
-        <el-table-column v-if="checkColumnDisplayed('attachment', columnsData.columns)" prop="attachment" label="服务附件" width="100" align="center" show-overflow-tooltip />
+        <el-table-column v-if="checkColumnDisplayed('attachment', columnsData.columns)" prop="attachment" label="服务附件" width="100" align="center" show-overflow-tooltip>
+          <template slot-scope="scope">
+            <el-button type="text" @click="handleShowServiceAttachment(scope.row.attachment)">查看</el-button>
+          </template>
+        </el-table-column>
         <el-table-column v-if="checkColumnDisplayed('createTime', columnsData.columns)" prop="createTime" label="创建时间" width="180" align="center" />
-        <el-table-column v-if="checkColumnDisplayed('userScore', columnsData.columns)" prop="userScore" label="用户评分" width="180" align="center" show-overflow-tooltip />
+        <el-table-column v-if="checkColumnDisplayed('userScore', columnsData.columns)" prop="userScore" label="用户评分" width="180" align="center" show-overflow-tooltip>
+          <template slot-scope="scope">
+            <el-rate v-model="scope.row.userScore" disabled />
+          </template>
+        </el-table-column>
         <el-table-column v-if="checkColumnDisplayed('userFeedback', columnsData.columns)" prop="userFeedback" label="用户反馈" width="180" align="center" show-overflow-tooltip />
         <el-table-column v-if="checkColumnDisplayed('handleStatus', columnsData.columns)" prop="handleStatus" label="服务状态" fixed="right" width="150" align="center" show-overflow-tooltip>
           <template slot-scope="scope">
@@ -101,6 +109,13 @@
     <HandleServiceForm :id="editData.id" :title="editData.title" :visible.sync="editData.visiable" />
     <HandleServiceDetail :id="showData.id" :title="showData.title" :visible.sync="showData.visiable" />
     <select-columns :title="columnsData.title" :columns="columnsData.columns" :visible.sync="columnsData.visiable" />
+    <el-dialog title="图片查看" :visible.sync="imgData.dialogVisible" class="jy-dialog" width="40%">
+      <el-carousel :interval="5000" arrow="always" height="400px">
+        <el-carousel-item v-for="(item, index) in imgData.dialogImageUrls" :key="'img_' + index">
+          <img height="400px" :src="item" alt="">
+        </el-carousel-item>
+      </el-carousel>
+    </el-dialog>
   </div>
 </template>
 
@@ -166,6 +181,11 @@ export default {
           { key: 'createTime', label: '创建时间', _showed: true },
           { key: 'handleStatus', label: '服务状态', _showed: true }
         ]
+      },
+      imgUrlPrefix: '/api/file-process/download/',
+      imgData: {
+        dialogVisible: false,
+        dialogImageUrls: []
       },
       handleServiceStatusOptions: []
     }
@@ -253,6 +273,11 @@ export default {
           this.deleteLoading = false
         })
       })
+    },
+    handleShowServiceAttachment(attachment) {
+      this.imgData.dialogVisible = true
+      if (attachment === null || attachment === '') this.imgData.dialogImageUrl = []
+      else this.imgData.dialogImageUrls = attachment.split(',').map(x => this.imgUrlPrefix + x)
     },
     handleTableRowClick(row, column, event) {
       this.selectData.current = row

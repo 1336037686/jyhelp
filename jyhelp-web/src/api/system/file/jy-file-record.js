@@ -16,6 +16,13 @@ export default {
     })
   },
 
+  getMultipleByIds(ids) {
+    return request({
+      url: '/api/file-record/query-multiple/' + ids,
+      method: 'get'
+    })
+  },
+
   remove(data) {
     return request({
       url: '/api/file-record/remove',
