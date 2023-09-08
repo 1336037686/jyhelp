@@ -5,7 +5,7 @@
     :close-on-press-escape="false"
     :close-on-click-modal="false"
     :show-close="false"
-    width="30%"
+    width="50%"
     class="jy-dialog"
   >
     <div
@@ -22,9 +22,9 @@
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">
-            商品ID
+            商品名称
           </template>
-          {{ form.productId }}
+          {{ form.productName }}
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">
@@ -34,9 +34,15 @@
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">
-            购买用户ID
+            购买用户账号
           </template>
-          {{ form.userId }}
+          {{ form.username }}
+        </el-descriptions-item>
+        <el-descriptions-item>
+          <template slot="label">
+            购买用户昵称
+          </template>
+          {{ form.nickname }}
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">
@@ -52,9 +58,9 @@
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">
-            订单状态（待付款、已付款、已取消）
+            订单状态
           </template>
-          {{ form.orderStatus }}
+          {{ getNameByCode(orderStatusOptions, form.orderStatus) }}
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">
@@ -68,13 +74,13 @@
           </template>
           {{ form.paymentTime }}
         </el-descriptions-item>
-        <el-descriptions-item>
+        <el-descriptions-item span="2">
           <template slot="label">
             付款方式
           </template>
-          {{ form.peymentMethod }}
+          {{ getNameByCode(orderPaymethodOptions, form.peymentMethod) }}
         </el-descriptions-item>
-        <el-descriptions-item>
+        <el-descriptions-item span="2">
           <template slot="label">
             备注
           </template>
@@ -114,8 +120,11 @@ export default {
         id: null,
         orderCode: null,
         productId: null,
+        productName: null,
         quantity: null,
         userId: null,
+        username: null,
+        nickname: null,
         totalAmount: null,
         finalTotalAmount: null,
         orderStatus: null,
@@ -123,7 +132,9 @@ export default {
         paymentTime: null,
         peymentMethod: null,
         remark: null
-      }
+      },
+      orderStatusOptions: [],
+      orderPaymethodOptions: []
     }
   },
   watch: {
@@ -138,7 +149,18 @@ export default {
     },
     deep: true
   },
+  created() {
+    this.getDict()
+  },
   methods: {
+    getDict() {
+      this.getDictByCode('module_order_status').then(res => {
+        this.orderStatusOptions = res.data
+      })
+      this.getDictByCode('module_order_paymethod').then(res => {
+        this.orderPaymethodOptions = res.data
+      })
+    },
     getById(id) {
       this.initloading = true
       orderApi.getById(id).then(response => {

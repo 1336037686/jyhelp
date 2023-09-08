@@ -6,21 +6,17 @@
     element-loading-spinner="el-icon-loading"
   >
     <el-card class="box-card" shadow="always">
-      <el-form v-show="queryFormVisiable" :inline="true" size="mini" :model="queryForm" label-width="100px">
+      <el-form v-show="queryFormVisiable" :inline="true" size="mini" :model="queryForm" label-width="150px">
         <el-form-item label="订单编号：">
           <el-input v-model="queryForm.orderCode" placeholder="订单编号" />
         </el-form-item>
-        <el-form-item label="商品ID：">
-          <el-input v-model="queryForm.productId" placeholder="商品ID" />
-        </el-form-item>
-        <el-form-item label="购买数量：">
-          <el-input v-model="queryForm.quantity" placeholder="购买数量" />
-        </el-form-item>
-        <el-form-item label="购买用户ID：">
-          <el-input v-model="queryForm.userId" placeholder="购买用户ID" />
+        <el-form-item label="用户账号：">
+          <el-input v-model="queryForm.username" placeholder="购买用户ID" />
         </el-form-item>
         <el-form-item label="订单状态：">
-          <el-input v-model="queryForm.orderStatus" placeholder="订单状态" />
+          <el-select v-model="queryForm.orderStatus" style="width: 90%">
+            <el-option v-for="item in orderStatusOptions" :key="'type_' + item.id" :label="item.name" :value="item.code" />
+          </el-select>
         </el-form-item>
         <el-form-item label="下单时间：">
           <el-input v-model="queryForm.orderTime" placeholder="下单时间" />
@@ -29,7 +25,9 @@
           <el-input v-model="queryForm.paymentTime" placeholder="付款时间" />
         </el-form-item>
         <el-form-item label="付款方式：">
-          <el-input v-model="queryForm.peymentMethod" placeholder="付款方式" />
+          <el-select v-model="queryForm.peymentMethod" style="width: 90%">
+            <el-option v-for="item in orderPaymethodOptions" :key="'type_' + item.id" :label="item.name" :value="item.code" />
+          </el-select>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" icon="el-icon-search" @click="handleQuery">查 询</el-button>
@@ -66,15 +64,26 @@
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column type="index" width="80" label="序号" align="center" />
         <el-table-column v-if="checkColumnDisplayed('orderCode', columnsData.columns)" prop="orderCode" label="订单编号" align="center" show-overflow-tooltip />
-        <el-table-column v-if="checkColumnDisplayed('productId', columnsData.columns)" prop="productId" label="商品ID" align="center" show-overflow-tooltip />
+        <el-table-column v-if="checkColumnDisplayed('productName', columnsData.columns)" prop="productName" label="商品名称" align="center" show-overflow-tooltip />
         <el-table-column v-if="checkColumnDisplayed('quantity', columnsData.columns)" prop="quantity" label="购买数量" align="center" show-overflow-tooltip />
-        <el-table-column v-if="checkColumnDisplayed('userId', columnsData.columns)" prop="userId" label="购买用户ID" align="center" show-overflow-tooltip />
+        <el-table-column v-if="checkColumnDisplayed('username', columnsData.columns)" prop="username" label="购买用户账号" align="center" show-overflow-tooltip />
+        <el-table-column v-if="checkColumnDisplayed('nickname', columnsData.columns)" prop="nickname" label="购买用户昵称" align="center" show-overflow-tooltip />
         <el-table-column v-if="checkColumnDisplayed('totalAmount', columnsData.columns)" prop="totalAmount" label="所需金额" align="center" show-overflow-tooltip />
         <el-table-column v-if="checkColumnDisplayed('finalTotalAmount', columnsData.columns)" prop="finalTotalAmount" label="实际金额" align="center" show-overflow-tooltip />
-        <el-table-column v-if="checkColumnDisplayed('orderStatus', columnsData.columns)" prop="orderStatus" label="订单状态" align="center" show-overflow-tooltip />
+        <el-table-column v-if="checkColumnDisplayed('orderStatus', columnsData.columns)" prop="orderStatus" label="订单状态" align="center" show-overflow-tooltip>
+          <template slot-scope="scope">
+            <el-tag v-if="scope.row.orderStatus === 'paid'" size="mini" effect="plain" type="success"> <i class="el-icon-success" />{{ getNameByCode(orderStatusOptions, scope.row.orderStatus) }}</el-tag>
+            <el-tag v-if="scope.row.orderStatus === 'unpaid'" size="mini" effect="plain" type="warning"> <i class="el-icon-remove" />{{ getNameByCode(orderStatusOptions, scope.row.orderStatus) }}</el-tag>
+            <el-tag v-if="scope.row.orderStatus === 'canceled'" size="mini" effect="plain" type="danger"> <i class="el-icon-error" />{{ getNameByCode(orderStatusOptions, scope.row.orderStatus) }}</el-tag>
+          </template>
+        </el-table-column>
         <el-table-column v-if="checkColumnDisplayed('orderTime', columnsData.columns)" prop="orderTime" label="下单时间" align="center" show-overflow-tooltip />
         <el-table-column v-if="checkColumnDisplayed('paymentTime', columnsData.columns)" prop="paymentTime" label="付款时间" align="center" show-overflow-tooltip />
-        <el-table-column v-if="checkColumnDisplayed('peymentMethod', columnsData.columns)" prop="peymentMethod" label="付款方式" align="center" show-overflow-tooltip />
+        <el-table-column v-if="checkColumnDisplayed('peymentMethod', columnsData.columns)" prop="peymentMethod" label="付款方式" align="center" show-overflow-tooltip>
+          <template slot-scope="scope">
+            {{ getNameByCode(orderPaymethodOptions, scope.row.peymentMethod) }}
+          </template>
+        </el-table-column>
         <el-table-column v-if="checkColumnDisplayed('remark', columnsData.columns)" prop="remark" label="备注" align="center" show-overflow-tooltip />
       </el-table>
       <div style="text-align: center;margin-top: 10px">
@@ -141,9 +150,10 @@ export default {
         visiable: false,
         columns: [
           { key: 'orderCode', label: '订单编号', _showed: true },
-          { key: 'productId', label: '商品ID', _showed: true },
+          { key: 'productName', label: '商品名称', _showed: true },
           { key: 'quantity', label: '购买数量', _showed: true },
-          { key: 'userId', label: '购买用户ID', _showed: true },
+          { key: 'username', label: '购买用户账号', _showed: true },
+          { key: 'nickname', label: '购买用户昵称', _showed: true },
           { key: 'totalAmount', label: '所需金额', _showed: true },
           { key: 'finalTotalAmount', label: '实际金额', _showed: true },
           { key: 'orderStatus', label: '订单状态', _showed: true },
@@ -152,13 +162,24 @@ export default {
           { key: 'peymentMethod', label: '付款方式', _showed: true },
           { key: 'remark', label: '备注', _showed: true }
         ]
-      }
+      },
+      orderStatusOptions: [],
+      orderPaymethodOptions: []
     }
   },
   created() {
+    this.getDict()
     this.getList()
   },
   methods: {
+    getDict() {
+      this.getDictByCode('module_order_status').then(res => {
+        this.orderStatusOptions = res.data
+      })
+      this.getDictByCode('module_order_paymethod').then(res => {
+        this.orderPaymethodOptions = res.data
+      })
+    },
     getList() {
       this.tableData.loading = true
       const queryForm = { ...this.queryForm, pageNumber: this.tableData.pageNumber, pageSize: this.tableData.pageSize }

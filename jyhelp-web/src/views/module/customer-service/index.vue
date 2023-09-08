@@ -69,8 +69,16 @@
           </template>
         </el-table-column>
         <el-table-column v-if="checkColumnDisplayed('createTime', columnsData.columns)" prop="createTime" label="创建时间" width="180" align="center" />
-        <el-table-column v-if="checkColumnDisplayed('sourceList', columnsData.columns)" prop="sourceList" label="来源明细" align="center" show-overflow-tooltip />
-        <el-table-column v-if="checkColumnDisplayed('serviceList', columnsData.columns)" prop="serviceList" label="服务记录" align="center" show-overflow-tooltip />
+        <el-table-column v-if="checkColumnDisplayed('sourceList', columnsData.columns)" prop="sourceList" label="来源明细" align="center" show-overflow-tooltip>
+          <template slot-scope="scope">
+            <el-button type="text" @click="handleShowSourceList(scope.row.id)">查看服务来源</el-button>
+          </template>
+        </el-table-column>
+        <el-table-column v-if="checkColumnDisplayed('serviceList', columnsData.columns)" prop="serviceList" label="服务记录" align="center" show-overflow-tooltip>
+          <template slot-scope="scope">
+            <el-button type="text" @click="handleShowServiceList(scope.row.id)">查看服务记录</el-button>
+          </template>
+        </el-table-column>
       </el-table>
       <div style="text-align: center;margin-top: 10px">
         <el-pagination
@@ -87,6 +95,63 @@
     <CustomerServiceForm :id="editData.id" :title="editData.title" :visible.sync="editData.visiable" />
     <CustomerServiceDetail :id="showData.id" :title="showData.title" :visible.sync="showData.visiable" />
     <select-columns :title="columnsData.title" :columns="columnsData.columns" :visible.sync="columnsData.visiable" />
+    <el-dialog title="来源明细查看" :visible.sync="orderData.dialogVisible" class="jy-dialog" width="70%">
+      <el-card shadow="never">
+        <el-table
+          ref="orderDataTable"
+          :data="orderData.records"
+          highlight-current-row
+          style="width: 100%"
+          height="300"
+          empty-text="暂无数据"
+          :header-cell-style="{background:'#F5F7FA', color: '#303133', fontWeight: 700}"
+        >
+          <el-table-column type="index" width="80" label="序号" align="center" />
+          <el-table-column prop="orderCode" label="订单编号" align="center" show-overflow-tooltip />
+          <el-table-column prop="productName" label="商品名称" align="center" show-overflow-tooltip />
+          <el-table-column prop="quantity" label="购买数量" align="center" show-overflow-tooltip />
+          <el-table-column prop="username" label="购买用户账号" align="center" show-overflow-tooltip />
+          <el-table-column prop="nickname" label="购买用户昵称" align="center" show-overflow-tooltip />
+          <el-table-column prop="finalTotalAmount" label="实际金额" align="center" show-overflow-tooltip />
+          <el-table-column prop="orderTime" label="下单时间" align="center" show-overflow-tooltip />
+          <el-table-column prop="paymentTime" label="付款时间" align="center" show-overflow-tooltip />
+        </el-table>
+      </el-card>
+    </el-dialog>
+    <el-dialog title="服务明细查看" :visible.sync="serviceData.dialogVisible" class="jy-dialog" width="80%">
+      <el-card shadow="never">
+        <el-table
+          ref="serviceDataTable"
+          :data="serviceData.records"
+          highlight-current-row
+          style="width: 100%"
+          height="300"
+          empty-text="暂无数据"
+          :header-cell-style="{background:'#F5F7FA', color: '#303133', fontWeight: 700}"
+        >
+          <el-table-column type="index" width="80" label="序号" align="center" />
+          <el-table-column prop="handleCode" fixed label="服务处理编号" align="center" show-overflow-tooltip />
+          <el-table-column prop="serviceCode" fixed label="会员服务编号" align="center" show-overflow-tooltip />
+          <el-table-column prop="handleTime" label="服务时间" align="center" show-overflow-tooltip />
+          <el-table-column prop="handleUserName" label="服务人员账号" align="center" show-overflow-tooltip />
+          <el-table-column prop="handleUserNickname" label="服务人员昵称" align="center" show-overflow-tooltip />
+          <el-table-column prop="handleRemark" label="服务记录" align="center" show-overflow-tooltip />
+          <el-table-column prop="createTime" label="创建时间" align="center" />
+          <el-table-column prop="userScore" label="用户评分" align="center" show-overflow-tooltip>
+            <template slot-scope="scope">
+              <el-rate v-model="scope.row.userScore" disabled />
+            </template>
+          </el-table-column>
+          <el-table-column prop="handleStatus" label="服务状态" fixed="right" align="center" show-overflow-tooltip>
+            <template slot-scope="scope">
+              <el-tag v-if="scope.row.handleStatus === 'await'" size="mini" effect="plain" type="warning"> <i class="el-icon-success" /> {{ getNameByCode(handleServiceStatusOptions, scope.row.handleStatus) }}</el-tag>
+              <el-tag v-if="scope.row.handleStatus === 'completed'" size="mini" effect="plain" type="success"> <i class="el-icon-error" /> {{ getNameByCode(handleServiceStatusOptions, scope.row.handleStatus) }}</el-tag>
+              <el-tag v-if="scope.row.handleStatus === 'reject'" size="mini" effect="plain" type="danger"> <i class="el-icon-error" /> {{ getNameByCode(handleServiceStatusOptions, scope.row.handleStatus) }}</el-tag>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-card>
+    </el-dialog>
   </div>
 </template>
 
@@ -96,6 +161,8 @@ import CustomerServiceForm from '@/views/module/customer-service/customer-servic
 import CustomerServiceDetail from '@/views/module/customer-service/customer-service-detail'
 import SelectColumns from '@/components/SelectColumns'
 import serviceCategoryApi from '@/api/module/service-category/service-category-api'
+import orderApi from '@/api/module/order/order-api'
+import handleServiceApi from '@/api/module/handle-service/handle-service-api'
 export default {
   components: { SelectColumns, CustomerServiceDetail, CustomerServiceForm },
   data() {
@@ -146,8 +213,17 @@ export default {
           { key: 'serviceList', label: '服务记录', _showed: true }
         ]
       },
+      orderData: {
+        dialogVisible: false,
+        records: []
+      },
+      serviceData: {
+        dialogVisible: false,
+        records: []
+      },
       serviceStatusOptions: [],
-      serviceCategoryOptions: []
+      serviceCategoryOptions: [],
+      handleServiceStatusOptions: []
     }
   },
   created() {
@@ -164,6 +240,9 @@ export default {
       })
       this.getDictByCode('module_service_status').then(res => {
         this.serviceStatusOptions = res.data
+      })
+      this.getDictByCode('module_handle_service_status').then(res => {
+        this.handleServiceStatusOptions = res.data
       })
     },
     getList() {
@@ -230,6 +309,24 @@ export default {
         }).catch(e => {
           this.deleteLoading = false
         })
+      })
+    },
+    handleShowSourceList(id) {
+      this.orderData.dialogVisible = true
+      this.orderData.records = []
+      orderApi.getByCustomerServiceId(id).then(res => {
+        this.orderData.records = res.data
+      }).catch(e => {
+        // ...
+      })
+    },
+    handleShowServiceList(id) {
+      this.serviceData.dialogVisible = true
+      this.serviceData.records = []
+      handleServiceApi.list({ customerServiceId: id }).then(res => {
+        this.serviceData.records = res.data
+      }).catch(e => {
+        // ...
       })
     },
     handleTableRowClick(row, column, event) {

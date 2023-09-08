@@ -16,6 +16,13 @@ export default {
     })
   },
 
+  getByCustomerServiceId(id) {
+    return request({
+      url: '/api/order/query-customer-service/' + id,
+      method: 'get'
+    })
+  },
+
   add(data, idempotentToken) {
     return request({
       url: '/api/order/create',
