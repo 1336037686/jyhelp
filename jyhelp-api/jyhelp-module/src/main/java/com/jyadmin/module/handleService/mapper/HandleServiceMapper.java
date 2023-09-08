@@ -9,6 +9,8 @@ import com.jyadmin.module.handleService.model.dto.HandleServiceDTO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 
 /**
  * 服务执行记录表 Mapper <br>
@@ -23,6 +25,7 @@ public interface HandleServiceMapper extends BaseMapper<HandleService> {
 
     Page<HandleServiceDTO> selectHandleServicePage(Page<HandleService> page, @Param(Constants.WRAPPER) LambdaQueryWrapper<HandleService> wrapper);
 
+    List<HandleServiceDTO> selectHandleServiceList(@Param(Constants.WRAPPER) LambdaQueryWrapper<HandleService> wrapper);
 }
 
 

@@ -9,6 +9,8 @@ import com.jyadmin.module.handleService.model.dto.HandleServiceDTO;
 import com.jyadmin.module.handleService.service.HandleServiceService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * 服务执行记录表 ServiceImpl <br>
  * @author jyadmin code generate <br>
@@ -22,6 +24,11 @@ public class HandleServiceServiceImpl extends ServiceImpl<HandleServiceMapper, H
     @Override
     public Page<HandleServiceDTO> getPage(Page<HandleService> page, LambdaQueryWrapper<HandleService> wrapper) {
         return this.baseMapper.selectHandleServicePage(page, wrapper);
+    }
+
+    @Override
+    public List<HandleServiceDTO> getList(LambdaQueryWrapper<HandleService> wrapper) {
+        return this.baseMapper.selectHandleServiceList(wrapper);
     }
 }
 

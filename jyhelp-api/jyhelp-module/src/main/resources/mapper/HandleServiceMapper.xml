@@ -45,4 +45,13 @@
               INNER JOIN sys_user su2 ON su2.id = tcs.user_id
         ) t ${ew.customSqlSegment}
     </select>
+    <select id="selectHandleServiceList" resultType="com.jyadmin.module.handleService.model.dto.HandleServiceDTO">
+        SELECT * FROM (
+              SELECT ths.*, su1.username "handle_user_name",su1.nickname "handle_user_nickname", tcs.service_code "service_code", su2.username "username", su2.nickname "nickname"
+              FROM tb_handle_service ths
+              INNER JOIN sys_user su1 ON su1.id = ths.handle_user
+              INNER JOIN tb_customer_service tcs ON tcs.id = ths.customer_service_id
+              INNER JOIN sys_user su2 ON su2.id = tcs.user_id
+        ) t ${ew.customSqlSegment}
+    </select>
 </mapper>

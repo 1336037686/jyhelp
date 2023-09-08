@@ -1,5 +1,6 @@
 package com.jyadmin.module.order.model.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -81,6 +82,7 @@ public class OrderUpdateReqVO implements Serializable {
      */
     @ApiModelProperty(value = "下单时间", name = "orderTime")
     @NotNull(message = "下单时间不能为空")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
     private LocalDateTime orderTime;
 
     /**
@@ -88,6 +90,7 @@ public class OrderUpdateReqVO implements Serializable {
      */
     @ApiModelProperty(value = "付款时间", name = "paymentTime")
     @NotNull(message = "付款时间不能为空")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
     private LocalDateTime paymentTime;
 
     /**

@@ -1,6 +1,8 @@
 package com.jyadmin.module.handleService.model.vo;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.jyadmin.domain.base.BasePageVO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -31,6 +33,13 @@ public class HandleServiceQueryReqVO extends BasePageVO implements Serializable 
      */
     @ApiModelProperty(value = "用户服务编码", name = "serviceCode")
     private String serviceCode;
+
+    /**
+     * 会员服务ID customer_service id
+     */
+    @ApiModelProperty(value = "会员服务ID", name = "customerServiceId")
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long customerServiceId;
 
     /**
      * 服务时间

@@ -1,6 +1,7 @@
 package com.jyadmin.module.order.domain;
 
 import com.baomidou.mybatisplus.annotation.*;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.jyadmin.domain.base.BaseEntity;
@@ -50,7 +51,7 @@ public class Order extends BaseEntity implements Serializable {
      */
     @JsonSerialize(using = ToStringSerializer.class)
     @TableField(value = "user_id")
-    private Integer userId;
+    private Long userId;
 
     /**
      * 所需金额（分）
@@ -73,12 +74,14 @@ public class Order extends BaseEntity implements Serializable {
     /**
      * 下单时间
      */
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
     @TableField(value = "order_time")
     private LocalDateTime orderTime;
 
     /**
      * 付款时间
      */
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
     @TableField(value = "payment_time")
     private LocalDateTime paymentTime;
 

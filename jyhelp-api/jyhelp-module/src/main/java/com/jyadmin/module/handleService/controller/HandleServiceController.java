@@ -34,6 +34,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -101,6 +102,25 @@ public class HandleServiceController {
         handleServiceDTO.setUsername(user.getUsername());
         handleServiceDTO.setNickname(user.getNickname());
         return Result.ok(handleServiceDTO);
+    }
+
+    @ApiOperation(value = "列表查询服务执行记录", notes = "")
+    @GetMapping("/list")
+    @PreAuthorize("@jy.check('handleService:list')")
+    public Result<List<HandleServiceDTO>> doQueryList(HandleServiceQueryReqVO vo) {
+        return Result.ok(this.handleServiceService.getList(new LambdaQueryWrapper<HandleService>()
+                .like(StringUtils.isNotBlank(vo.getHandleCode()), HandleService::getHandleCode, vo.getHandleCode())
+                .eq(Objects.nonNull(vo.getHandleTime()), HandleService::getHandleTime, vo.getHandleTime())
+                .eq(Objects.nonNull(vo.getHandleStatus()), HandleService::getHandleStatus, vo.getHandleStatus())
+                .eq(Objects.nonNull(vo.getCustomerServiceId()), HandleService::getCustomerServiceId, vo.getCustomerServiceId())
+                .eq(HandleService::getDeleted, GlobalConstants.SysDeleted.EXIST.getValue())
+                .apply(StringUtils.isNotBlank(vo.getServiceCode()), "service_code LIKE CONCAT('%',{0},'%')", vo.getServiceCode())
+                .apply(StringUtils.isNotBlank(vo.getHandleUserName()), "handle_user_name LIKE CONCAT('%',{0},'%')", vo.getHandleUserName())
+                .apply(StringUtils.isNotBlank(vo.getHandleUserNickname()), "handle_user_nickname LIKE CONCAT('%',{0},'%')", vo.getHandleUserNickname())
+                .apply(StringUtils.isNotBlank(vo.getUsername()), "username LIKE CONCAT('%',{0},'%')", vo.getUsername())
+                .apply(StringUtils.isNotBlank(vo.getNickname()), "nickname LIKE CONCAT('%',{0},'%')", vo.getNickname())
+                .orderByDesc(HandleService::getCreateTime)
+        ));
     }
 
     @ApiOperation(value = "分页查询服务执行记录", notes = "")

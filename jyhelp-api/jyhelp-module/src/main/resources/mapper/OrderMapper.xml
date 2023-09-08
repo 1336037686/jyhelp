@@ -42,4 +42,22 @@
         update_time,
         deleted
     </sql>
+    <select id="selectOrderPage" resultType="com.jyadmin.module.order.model.dto.OrderDTO">
+        SELECT * FROM (
+            SELECT
+              torder.*, su.username "username", su.nickname "nickname", tp.name "product_name"
+            FROM tb_order torder
+            INNER JOIN tb_product tp ON tp.id = torder.product_id
+            INNER JOIN sys_user su ON su.id = torder.user_id
+        ) t ${ew.customSqlSegment}
+    </select>
+    <select id="selectOrderList" resultType="com.jyadmin.module.order.model.dto.OrderDTO">
+        SELECT * FROM (
+           SELECT
+              torder.*, su.username "username", su.nickname "nickname", tp.name "product_name"
+           FROM tb_order torder
+           INNER JOIN tb_product tp ON tp.id = torder.product_id
+           INNER JOIN sys_user su ON su.id = torder.user_id
+        ) t ${ew.customSqlSegment}
+    </select>
 </mapper>

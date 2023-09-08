@@ -38,28 +38,10 @@ public class OrderQueryReqVO extends BasePageVO implements Serializable {
     private Long productId;
 
     /**
-     * 购买数量
-     */
-    @ApiModelProperty(value = "购买数量", name = "quantity")
-    private Integer quantity;
-
-    /**
      * 购买用户ID
      */
     @ApiModelProperty(value = "购买用户ID", name = "userId")
     private Integer userId;
-
-    /**
-     * 所需金额（分）
-     */
-    @ApiModelProperty(value = "所需金额（分）", name = "totalAmount")
-    private Long totalAmount;
-
-    /**
-     * 实际金额（分）
-     */
-    @ApiModelProperty(value = "实际金额（分）", name = "finalTotalAmount")
-    private Long finalTotalAmount;
 
     /**
      * 订单状态（待付款、已付款、已取消）
