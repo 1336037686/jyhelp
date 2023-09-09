@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jyadmin.module.dashboard.mapper.DashboardMapper">
+
+    <select id="selectMemberCount" resultType="java.lang.Integer">
+        SELECT COUNT(1) FROM sys_user su
+        INNER JOIN tr_user_role tur ON su.id = tur.user_id
+        INNER JOIN sys_role sr ON sr.id = tur.role_id
+        WHERE su.deleted = 0 and tur.deleted = 0 and sr.deleted = 0 and sr.code = 'member'
+        <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+            AND su.create_time BETWEEN #{startTime} AND #{endTime}
+        </if>
+    </select>
+    <select id="selectOrderCount" resultType="java.lang.Integer">
+        SELECT COUNT(1)
+        FROM tb_order tor
+        WHERE tor.deleted = '0' and tor.order_status = 'paid'
+        <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+            AND tor.payment_time BETWEEN #{startTime} AND #{endTime}
+        </if>
+    </select>
+    <select id="selectTotalMoney" resultType="java.lang.Double">
+        SELECT IFNULL(SUM(tor.final_total_amount), 0) FROM tb_order tor WHERE tor.deleted = '0' and tor.order_status = 'paid'
+        <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+            AND tor.payment_time BETWEEN #{startTime} AND #{endTime}
+        </if>
+    </select>
+    <select id="selectProduct" resultType="java.lang.Integer">
+        SELECT COUNT(1)
+        FROM tb_product tp
+        WHERE tp.deleted = 0 and tp.status = 1
+        <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+            AND tp.create_time BETWEEN #{startTime} AND #{endTime}
+        </if>
+    </select>
+    <select id="selectService" resultType="java.lang.Integer">
+        SELECT COUNT(1)
+        FROM tb_handle_service ths
+        WHERE ths.deleted = 0 and ths.handle_status = 'completed'
+        <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+            AND ths.handle_time BETWEEN #{startTime} AND #{endTime}
+        </if>
+    </select>
+</mapper>
