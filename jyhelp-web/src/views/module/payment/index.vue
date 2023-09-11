@@ -6,20 +6,12 @@
     element-loading-spinner="el-icon-loading"
   >
     <el-card class="box-card" shadow="always">
-      <el-form v-show="queryFormVisiable" :inline="true" size="mini" :model="queryForm" label-width="120px">
+      <el-form v-show="queryFormVisiable" :inline="true" size="mini" :model="queryForm" label-width="100px">
         <el-form-item label="订单编号：">
           <el-input v-model="queryForm.orderCode" placeholder="订单编号" />
         </el-form-item>
         <el-form-item label="用户账号：">
-          <el-input v-model="queryForm.username" placeholder="购买用户ID" />
-        </el-form-item>
-        <el-form-item label="订单状态：">
-          <el-select v-model="queryForm.orderStatus" style="width: 90%">
-            <el-option v-for="item in orderStatusOptions" :key="'type_' + item.id" :label="item.name" :value="item.code" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="下单时间：">
-          <el-input v-model="queryForm.orderTime" placeholder="下单时间" />
+          <el-input v-model="queryForm.username" placeholder="用户账号" />
         </el-form-item>
         <el-form-item label="付款时间：">
           <el-input v-model="queryForm.paymentTime" placeholder="付款时间" />
@@ -36,7 +28,6 @@
       </el-form>
       <div style="margin-top: 5px">
         <el-button type="primary" icon="el-icon-view" size="mini" @click="handleShow">查 看</el-button>
-        <el-button type="danger" icon="el-icon-delete" size="mini" @click="handleRemove">删 除</el-button>
       </div>
     </el-card>
 
@@ -121,7 +112,7 @@ export default {
         userId: null,
         totalAmount: null,
         finalTotalAmount: null,
-        orderStatus: null,
+        orderStatus: 'paid',
         orderTime: null,
         paymentTime: null,
         peymentMethod: null,
@@ -203,7 +194,7 @@ export default {
       this.queryForm.userId = null
       this.queryForm.totalAmount = null
       this.queryForm.finalTotalAmount = null
-      this.queryForm.orderStatus = null
+      this.queryForm.orderStatus = 'paid'
       this.queryForm.orderTime = null
       this.queryForm.paymentTime = null
       this.queryForm.peymentMethod = null
