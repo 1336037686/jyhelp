@@ -52,7 +52,7 @@ export default {
         legend: {
           left: 'center',
           bottom: '10',
-          data: ['Industries', 'Technology', 'Forex', 'Gold', 'Forecasts']
+          data: ['宠物寄养服务', '上门喂养服务', '上门遛狗服务', '帮带垃圾服务', '快递代取服务']
         },
         series: [
           {
@@ -62,11 +62,11 @@ export default {
             radius: [15, 95],
             center: ['50%', '38%'],
             data: [
-              { value: 320, name: 'Industries' },
-              { value: 240, name: 'Technology' },
-              { value: 149, name: 'Forex' },
-              { value: 100, name: 'Gold' },
-              { value: 59, name: 'Forecasts' }
+              { value: 320, name: '宠物寄养服务' },
+              { value: 240, name: '上门喂养服务' },
+              { value: 149, name: '上门遛狗服务' },
+              { value: 100, name: '帮带垃圾服务' },
+              { value: 59, name: '快递代取服务' }
             ],
             animationEasing: 'cubicInOut',
             animationDuration: 2600

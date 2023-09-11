@@ -5,12 +5,12 @@
     <el-row :gutter="32">
       <el-col :xs="24" :sm="24" :lg="16">
         <div class="chart-wrapper">
-          <line-chart :chart-data="lineChartData" />
+          <line-chart :chart-data="lineChartData" :height="'350px'" />
         </div>
       </el-col>
       <el-col :xs="24" :sm="24" :lg="8">
         <div class="chart-wrapper">
-          <bar-chart />
+          <member-chart :height="'350px'" />
         </div>
       </el-col>
     </el-row>
@@ -18,7 +18,7 @@
     <el-row :gutter="32">
       <el-col :xs="24" :sm="24" :lg="8">
         <div class="chart-wrapper">
-          <raddar-chart />
+          <service-chart />
         </div>
       </el-col>
       <el-col :xs="24" :sm="24" :lg="8">
@@ -37,8 +37,9 @@
 
 <script>
 import PanelGroup from './components/PanelGroup'
+import MemberChart from '@/views/dashboard/admin/components/MemberChart'
+import ServiceChart from '@/views/dashboard/admin/components/ServiceChart'
 import LineChart from './components/LineChart'
-import RaddarChart from './components/RaddarChart'
 import PieChart from './components/PieChart'
 import BarChart from './components/BarChart'
 
@@ -66,9 +67,10 @@ export default {
   components: {
     PanelGroup,
     LineChart,
-    RaddarChart,
     PieChart,
-    BarChart
+    BarChart,
+    MemberChart,
+    ServiceChart
   },
   data() {
     return {
