@@ -38,4 +38,31 @@ public class DashboardController {
         return Result.ok(list);
     }
 
+    /**
+     * 获取首页订单营收统计数据
+     */
+    @ApiOperation(value = "获取首页订单营收统计数据", notes = "")
+    @GetMapping("/query/order-chart")
+    public Result<Object> doQueryOrderChartData() {
+        return Result.ok();
+    }
+
+    /**
+     * 获取首页会员统计数据
+     */
+    @ApiOperation(value = "获取首页会员统计数据", notes = "")
+    @GetMapping("/query/member-chart")
+    public Result<Object> doQueryMemberChartData() {
+        return Result.ok();
+    }
+
+    /**
+     * 获取首页服务统计数据
+     */
+    @ApiOperation(value = "获取首页服务统计数据", notes = "")
+    @GetMapping("/query/service-chart")
+    public Result<Object> doQueryServiceChartData() {
+        return Result.ok();
+    }
+
 }
