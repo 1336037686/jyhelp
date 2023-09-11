@@ -41,4 +41,66 @@
             AND ths.handle_time BETWEEN #{startTime} AND #{endTime}
         </if>
     </select>
+    <select id="selectDailyOrderForCurrentMonth" resultType="com.jyadmin.module.dashboard.model.dto.OrderChartItemDTO">
+        SELECT
+            DATE_FORMAT(date_sequence.date, '%Y/%m/%d') AS "date",
+            COUNT(tod.create_time) AS "count",
+            IFNULL(SUM(tod.final_total_amount), 0) "amount"
+        FROM (
+            SELECT
+            DATE_ADD(LAST_DAY(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH)), INTERVAL t.n DAY) AS date
+            FROM (
+                SELECT a.N + b.N * 10 AS n
+                FROM (
+                    SELECT 0 AS N UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL
+                    SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9
+                ) a
+                CROSS JOIN (
+                    SELECT 0 AS N UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL
+                    SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9
+                ) b
+            ) t
+            WHERE t.n &lt;= DAY(LAST_DAY(CURRENT_DATE()))
+        ) date_sequence
+        LEFT JOIN tb_order tod ON DATE(date_sequence.date) = DATE(tod.create_time) AND MONTH(date_sequence.date) = MONTH(CURRENT_DATE()) AND tod.deleted = 0 and tod.order_status = 'paid'
+        WHERE MONTH(date_sequence.date) = MONTH(CURRENT_DATE())
+        GROUP BY date_sequence.date
+        ORDER BY date_sequence.date;
+    </select>
+    <select id="selectDailyMemberForCurrentWeek" resultType="com.jyadmin.module.dashboard.model.dto.MemberChartItemDTO">
+        SELECT
+        DATE_FORMAT(date_sequence.date, '%Y/%m/%d') AS "date",
+        COUNT(t.create_time) AS "add",
+        (
+            SELECT COUNT(1)
+            FROM sys_user su
+            INNER JOIN tr_user_role tur ON su.id = tur.user_id
+            INNER JOIN sys_role sr ON sr.id = tur.role_id
+            WHERE su.deleted = 0 and tur.deleted = 0 and sr.deleted = 0 AND sr.code = 'member' AND DATE(su.create_time) &lt;= DATE(date_sequence.date)
+        ) AS "total"
+        FROM (
+            SELECT DATE_ADD(CURRENT_DATE(), INTERVAL 1-DAYOFWEEK(CURRENT_DATE()) DAY) AS date
+            UNION ALL
+            SELECT DATE_ADD(CURRENT_DATE(), INTERVAL 1-DAYOFWEEK(CURRENT_DATE())+1 DAY)
+            UNION ALL
+            SELECT DATE_ADD(CURRENT_DATE(), INTERVAL 1-DAYOFWEEK(CURRENT_DATE())+2 DAY)
+            UNION ALL
+            SELECT DATE_ADD(CURRENT_DATE(), INTERVAL 1-DAYOFWEEK(CURRENT_DATE())+3 DAY)
+            UNION ALL
+            SELECT DATE_ADD(CURRENT_DATE(), INTERVAL 1-DAYOFWEEK(CURRENT_DATE())+4 DAY)
+            UNION ALL
+            SELECT DATE_ADD(CURRENT_DATE(), INTERVAL 1-DAYOFWEEK(CURRENT_DATE())+5 DAY)
+            UNION ALL
+            SELECT DATE_ADD(CURRENT_DATE(), INTERVAL 1-DAYOFWEEK(CURRENT_DATE())+6 DAY)
+        ) date_sequence
+        LEFT JOIN (
+            SELECT su.* FROM sys_user su
+            INNER JOIN tr_user_role tur ON su.id = tur.user_id
+            INNER JOIN sys_role sr ON sr.id = tur.role_id
+            WHERE su.deleted = 0 and tur.deleted = 0 and sr.deleted = 0 AND sr.code = 'member'
+        ) t ON DATE(date_sequence.date) = DATE(t.create_time)
+        GROUP BY date_sequence.date
+        ORDER BY date_sequence.date;
+
+    </select>
 </mapper>

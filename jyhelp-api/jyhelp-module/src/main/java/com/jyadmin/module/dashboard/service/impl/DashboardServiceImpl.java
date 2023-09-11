@@ -1,14 +1,12 @@
 package com.jyadmin.module.dashboard.service.impl;
 
-import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.google.common.collect.Lists;
 import com.jyadmin.module.dashboard.mapper.DashboardMapper;
+import com.jyadmin.module.dashboard.model.dto.MemberChartItemDTO;
+import com.jyadmin.module.dashboard.model.dto.OrderChartItemDTO;
 import com.jyadmin.module.dashboard.model.dto.PanelItemDTO;
 import com.jyadmin.module.dashboard.service.DashboardService;
-import com.jyadmin.system.user.domain.User;
-import com.jyadmin.system.user.service.UserService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -86,6 +84,16 @@ public class DashboardServiceImpl implements DashboardService {
         res.add(services);
 
         return res;
+    }
+
+    @Override
+    public List<OrderChartItemDTO> getOrderChartData() {
+        return dashboardMapper.selectDailyOrderForCurrentMonth();
+    }
+
+    @Override
+    public List<MemberChartItemDTO> getMemberChart() {
+        return dashboardMapper.selectDailyMemberForCurrentWeek();
     }
 
 }

@@ -1,6 +1,8 @@
 package com.jyadmin.module.dashboard.controller;
 
 import com.jyadmin.domain.Result;
+import com.jyadmin.module.dashboard.model.dto.MemberChartItemDTO;
+import com.jyadmin.module.dashboard.model.dto.OrderChartItemDTO;
 import com.jyadmin.module.dashboard.model.dto.PanelItemDTO;
 import com.jyadmin.module.dashboard.service.DashboardService;
 import io.swagger.annotations.Api;
@@ -43,8 +45,9 @@ public class DashboardController {
      */
     @ApiOperation(value = "获取首页订单营收统计数据", notes = "")
     @GetMapping("/query/order-chart")
-    public Result<Object> doQueryOrderChartData() {
-        return Result.ok();
+    public Result<List<OrderChartItemDTO>> doQueryOrderChartData() {
+        List<OrderChartItemDTO> list = dashboardService.getOrderChartData();
+        return Result.ok(list);
     }
 
     /**
@@ -53,7 +56,8 @@ public class DashboardController {
     @ApiOperation(value = "获取首页会员统计数据", notes = "")
     @GetMapping("/query/member-chart")
     public Result<Object> doQueryMemberChartData() {
-        return Result.ok();
+        List<MemberChartItemDTO> list = dashboardService.getMemberChart();
+        return Result.ok(list);
     }
 
     /**
