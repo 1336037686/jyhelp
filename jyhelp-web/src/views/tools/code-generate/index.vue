@@ -71,20 +71,18 @@
           </template>
         </el-table-column>
       </el-table>
+      <div style="text-align: center;margin-top: 10px">
+        <el-pagination
+          v-model="tableData.pageNumber"
+          background
+          layout="prev, pager, next"
+          :page-size="tableData.pageSize"
+          :hide-on-single-page="true"
+          :total="tableData.total"
+          @current-change="handleChangePage"
+        />
+      </div>
     </el-card>
-
-    <div style="text-align: center;margin-top: 10px">
-      <el-pagination
-        v-model="tableData.pageNumber"
-        background
-        layout="prev, pager, next"
-        :page-size="tableData.pageSize"
-        :hide-on-single-page="true"
-        :total="tableData.total"
-        @current-change="handleChangePage"
-      />
-    </div>
-
     <code-generate-form :title="importData.title" :visible.sync="importData.visiable" />
     <code-generate-edit :id="editData.id" :title="editData.title" :visible.sync="editData.visiable" />
     <code-generate-preview :id="previewData.id" :title="previewData.title" :visible.sync="previewData.visiable" />
