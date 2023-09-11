@@ -6,7 +6,7 @@
 import echarts from 'echarts'
 require('echarts/theme/macarons') // echarts theme
 import resize from './mixins/resize'
-
+import dashboardApi from '@/api/module/dashboard/dashboard-api'
 export default {
   mixins: [resize],
   props: {
@@ -25,7 +25,9 @@ export default {
   },
   data() {
     return {
-      chart: null
+      chart: null,
+      data: [],
+      name: []
     }
   },
   mounted() {
@@ -42,8 +44,18 @@ export default {
   },
   methods: {
     initChart() {
+      this.data = []
+      this.name = []
       this.chart = echarts.init(this.$el, 'macarons')
-
+      dashboardApi.getServiceCategoryChart().then(res => {
+        for (let i = 0; i < res.data.length; i++) {
+          this.data.push({ value: res.data[i].count, name: res.data[i].name })
+          this.name.push(res.data[i].name)
+        }
+        this.setOption()
+      })
+    },
+    setOption() {
       this.chart.setOption({
         tooltip: {
           trigger: 'item',
@@ -52,22 +64,16 @@ export default {
         legend: {
           left: 'center',
           bottom: '10',
-          data: ['宠物寄养服务', '上门喂养服务', '上门遛狗服务', '帮带垃圾服务', '快递代取服务']
+          data: this.name
         },
         series: [
           {
-            name: 'WEEKLY WRITE ARTICLES',
+            name: '各服务销售占比',
             type: 'pie',
             roseType: 'radius',
             radius: [15, 95],
             center: ['50%', '38%'],
-            data: [
-              { value: 320, name: '宠物寄养服务' },
-              { value: 240, name: '上门喂养服务' },
-              { value: 149, name: '上门遛狗服务' },
-              { value: 100, name: '帮带垃圾服务' },
-              { value: 59, name: '快递代取服务' }
-            ],
+            data: this.data,
             animationEasing: 'cubicInOut',
             animationDuration: 2600
           }

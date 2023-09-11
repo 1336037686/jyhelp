@@ -6,6 +6,7 @@
 import echarts from 'echarts'
 require('echarts/theme/macarons') // echarts theme
 import resize from './mixins/resize'
+import dashboardApi from '@/api/module/dashboard/dashboard-api'
 export default {
   mixins: [resize],
   props: {
@@ -29,7 +30,9 @@ export default {
   data() {
     return {
       chart: null,
-      chartData: null
+      chartData: null,
+      date: [],
+      count: []
     }
   },
   mounted() {
@@ -47,13 +50,21 @@ export default {
   methods: {
     initChart() {
       this.chart = echarts.init(this.$el, 'macarons')
-      this.setOptions(this.chartData)
+      this.date = []
+      this.count = []
+      dashboardApi.getServiceChart().then(res => {
+        for (let i = 0; i < res.data.length; i++) {
+          this.date.push(res.data[i].date)
+          this.count.push(res.data[i].count)
+        }
+        this.setOptions()
+      })
     },
     setOptions() {
       this.chart.setOption({
         backgroundColor: '#fff',
         title: {
-          text: '当日服务数',
+          text: '当日服务次数',
           textStyle: {
             align: 'center',
             color: '#fff',
@@ -64,7 +75,7 @@ export default {
         },
         legend: {
           color: ['#17B4FA', '#47D8BE', '#F9A589'],
-          data: ['当日服务数'],
+          data: ['当日服务次数'],
           left: 'center',
           top: '8%'
         },
@@ -127,7 +138,7 @@ export default {
               show: false
             },
             boundaryGap: false,
-            data: ['8：00', '9:00', '10:00', '11:00', '12:00', '13:00']
+            data: this.date
           }
         ],
         yAxis: [
@@ -159,7 +170,7 @@ export default {
         ],
         series: [
           {
-            name: '当日服务数',
+            name: '当日服务次数',
             type: 'line',
             // smooth: true, //是否平滑
             showAllSymbol: true,
@@ -217,7 +228,7 @@ export default {
                 shadowBlur: 20
               }
             },
-            data: [502.84, 205.97, 332.79, 281.55, 398.35, 214.02]
+            data: this.count
           }
         ]
       })

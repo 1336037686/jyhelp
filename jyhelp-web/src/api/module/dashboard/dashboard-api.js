@@ -23,6 +23,22 @@ export default {
       url: '/api/dashboard/query/member-chart',
       method: 'get'
     })
+  },
+
+  // 获取首页服务统计数据
+  getServiceChart() {
+    return request({
+      url: '/api/dashboard/query/service-chart',
+      method: 'get'
+    })
+  },
+
+  // 获取首页服务统计数据
+  getServiceCategoryChart() {
+    return request({
+      url: '/api/dashboard/query/service-category-chart',
+      method: 'get'
+    })
   }
 
 }
