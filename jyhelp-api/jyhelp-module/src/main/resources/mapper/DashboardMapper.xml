@@ -103,4 +103,37 @@
         ORDER BY date_sequence.date;
 
     </select>
+    <select id="selectDailyServiceForCurrentWeek" resultType="com.jyadmin.module.dashboard.model.dto.ServiceChartItemDTO">
+        SELECT
+            DATE_FORMAT(date_sequence.date, '%Y/%m/%d') AS "date",
+            COUNT(t.create_time) AS "count"
+        FROM (
+                 SELECT DATE_ADD(CURRENT_DATE(), INTERVAL 1-DAYOFWEEK(CURRENT_DATE()) DAY) AS date
+                 UNION ALL
+                 SELECT DATE_ADD(CURRENT_DATE(), INTERVAL 1-DAYOFWEEK(CURRENT_DATE())+1 DAY)
+                 UNION ALL
+                 SELECT DATE_ADD(CURRENT_DATE(), INTERVAL 1-DAYOFWEEK(CURRENT_DATE())+2 DAY)
+                 UNION ALL
+                 SELECT DATE_ADD(CURRENT_DATE(), INTERVAL 1-DAYOFWEEK(CURRENT_DATE())+3 DAY)
+                 UNION ALL
+                 SELECT DATE_ADD(CURRENT_DATE(), INTERVAL 1-DAYOFWEEK(CURRENT_DATE())+4 DAY)
+                 UNION ALL
+                 SELECT DATE_ADD(CURRENT_DATE(), INTERVAL 1-DAYOFWEEK(CURRENT_DATE())+5 DAY)
+                 UNION ALL
+                 SELECT DATE_ADD(CURRENT_DATE(), INTERVAL 1-DAYOFWEEK(CURRENT_DATE())+6 DAY)
+        ) date_sequence
+        LEFT JOIN (
+            SELECT * FROM tb_handle_service ths WHERE ths.deleted = 0
+        ) t ON DATE(date_sequence.date) = DATE(t.create_time)
+        GROUP BY date_sequence.date
+        ORDER BY date_sequence.date;
+    </select>
+    <select id="selectServiceCategoryCount" resultType="com.jyadmin.module.dashboard.model.dto.ServiceCategoryChartItemDTO">
+        SELECT COUNT(tsc.name) "count", tsc.name "name" FROM tb_order tor
+        INNER JOIN tb_product tp ON tp.id = tor.product_id
+        INNER JOIN tb_service_category tsc ON tsc.id = tp.service_category_id
+        WHERE tor.deleted = 0 AND tor.order_status = 'paid'
+        GROUP BY tsc.name
+        ORDER BY "count" desc
+    </select>
 </mapper>

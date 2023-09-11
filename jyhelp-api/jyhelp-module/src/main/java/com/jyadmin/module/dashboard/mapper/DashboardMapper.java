@@ -3,6 +3,8 @@ package com.jyadmin.module.dashboard.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.jyadmin.module.dashboard.model.dto.MemberChartItemDTO;
 import com.jyadmin.module.dashboard.model.dto.OrderChartItemDTO;
+import com.jyadmin.module.dashboard.model.dto.ServiceCategoryChartItemDTO;
+import com.jyadmin.module.dashboard.model.dto.ServiceChartItemDTO;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -51,4 +53,14 @@ public interface DashboardMapper extends BaseMapper {
      * 查询本周会员注册数
      */
     List<MemberChartItemDTO> selectDailyMemberForCurrentWeek();
+
+    /**
+     * 查询本周服务数
+     */
+    List<ServiceChartItemDTO> selectDailyServiceForCurrentWeek();
+
+    /**
+     * 查询服务类别统计数据
+     */
+    List<ServiceCategoryChartItemDTO> selectServiceCategoryCount();
 }

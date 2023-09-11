@@ -1,8 +1,6 @@
 package com.jyadmin.module.dashboard.service;
 
-import com.jyadmin.module.dashboard.model.dto.MemberChartItemDTO;
-import com.jyadmin.module.dashboard.model.dto.OrderChartItemDTO;
-import com.jyadmin.module.dashboard.model.dto.PanelItemDTO;
+import com.jyadmin.module.dashboard.model.dto.*;
 
 import java.util.List;
 
@@ -19,4 +17,8 @@ public interface DashboardService {
     List<OrderChartItemDTO> getOrderChartData();
 
     List<MemberChartItemDTO> getMemberChart();
+
+    List<ServiceChartItemDTO> getServiceChart();
+
+    List<ServiceCategoryChartItemDTO> getServiceCategoryChart();
 }

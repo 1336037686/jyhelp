@@ -3,9 +3,7 @@ package com.jyadmin.module.dashboard.service.impl;
 import cn.hutool.core.date.DateUtil;
 import com.google.common.collect.Lists;
 import com.jyadmin.module.dashboard.mapper.DashboardMapper;
-import com.jyadmin.module.dashboard.model.dto.MemberChartItemDTO;
-import com.jyadmin.module.dashboard.model.dto.OrderChartItemDTO;
-import com.jyadmin.module.dashboard.model.dto.PanelItemDTO;
+import com.jyadmin.module.dashboard.model.dto.*;
 import com.jyadmin.module.dashboard.service.DashboardService;
 import org.springframework.stereotype.Service;
 
@@ -94,6 +92,23 @@ public class DashboardServiceImpl implements DashboardService {
     @Override
     public List<MemberChartItemDTO> getMemberChart() {
         return dashboardMapper.selectDailyMemberForCurrentWeek();
+    }
+
+    @Override
+    public List<ServiceChartItemDTO> getServiceChart() {
+        return dashboardMapper.selectDailyServiceForCurrentWeek();
+    }
+
+    @Override
+    public List<ServiceCategoryChartItemDTO> getServiceCategoryChart() {
+        List<ServiceCategoryChartItemDTO> res = org.apache.commons.compress.utils.Lists.newArrayList();
+        List<ServiceCategoryChartItemDTO> list = dashboardMapper.selectServiceCategoryCount();
+        if (list.size() <= 7) return list;
+        for (int i = 0; i < list.size(); i++) if (i < 7) res.add(list.get(i));
+        ServiceCategoryChartItemDTO other = new ServiceCategoryChartItemDTO().setName("其他服务").setCount(0);
+        for (int i = 7; i < list.size(); i++) other.setCount(other.getCount() + list.get(i).getCount());
+        res.add(other);
+        return res;
     }
 
 }

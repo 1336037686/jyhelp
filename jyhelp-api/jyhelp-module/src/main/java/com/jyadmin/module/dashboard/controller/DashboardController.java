@@ -1,13 +1,12 @@
 package com.jyadmin.module.dashboard.controller;
 
 import com.jyadmin.domain.Result;
-import com.jyadmin.module.dashboard.model.dto.MemberChartItemDTO;
-import com.jyadmin.module.dashboard.model.dto.OrderChartItemDTO;
-import com.jyadmin.module.dashboard.model.dto.PanelItemDTO;
+import com.jyadmin.module.dashboard.model.dto.*;
 import com.jyadmin.module.dashboard.service.DashboardService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.compress.utils.Lists;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -66,7 +65,18 @@ public class DashboardController {
     @ApiOperation(value = "获取首页服务统计数据", notes = "")
     @GetMapping("/query/service-chart")
     public Result<Object> doQueryServiceChartData() {
-        return Result.ok();
+        List<ServiceChartItemDTO> list = dashboardService.getServiceChart();
+        return Result.ok(list);
+    }
+
+    /**
+     * 获取首页服务类别统计数据
+     */
+    @ApiOperation(value = "获取首页服务类别统计数据", notes = "")
+    @GetMapping("/query/service-category-chart")
+    public Result<Object> doQueryServiceCategoryChartData() {
+        List<ServiceCategoryChartItemDTO> list = dashboardService.getServiceCategoryChart();
+        return Result.ok(list);
     }
 
 }
