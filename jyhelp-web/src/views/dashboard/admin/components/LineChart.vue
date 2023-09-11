@@ -6,7 +6,7 @@
 import echarts from 'echarts'
 require('echarts/theme/macarons') // echarts theme
 import resize from './mixins/resize'
-
+import dashboardApi from '@/api/module/dashboard/dashboard-api'
 export default {
   mixins: [resize],
   props: {
@@ -33,7 +33,10 @@ export default {
   },
   data() {
     return {
-      chart: null
+      chart: null,
+      date: [],
+      orderCount: [],
+      orderAmount: []
     }
   },
   watch: {
@@ -46,7 +49,7 @@ export default {
   },
   mounted() {
     this.$nextTick(() => {
-      this.initChart()
+      this.getData()
     })
   },
   beforeDestroy() {
@@ -57,6 +60,20 @@ export default {
     this.chart = null
   },
   methods: {
+    getData() {
+      dashboardApi.getOrderChart().then(res => {
+        console.log(res.data)
+        this.date = []
+        this.orderCount = []
+        this.orderAmount = []
+        for (let i = 0; i < res.data.length; i++) {
+          this.date.push(res.data[i].date)
+          this.orderCount.push(res.data[i].count)
+          this.orderAmount.push(res.data[i].amount)
+        }
+        this.initChart()
+      })
+    },
     initChart() {
       this.chart = echarts.init(this.$el, 'macarons')
       this.setOptions(this.chartData)
@@ -80,34 +97,25 @@ export default {
             type: 'slider',
             show: true,
             realtime: true,
-            start: 65,
-            end: 85
+            start: 50,
+            end: 90
           },
           {
             type: 'inside',
             realtime: true,
-            start: 65,
-            end: 85
+            start: 50,
+            end: 90
           }
         ],
         tooltip: {
           trigger: 'axis',
           axisPointer: {
             label: {
-              show: true,
-              backgroundColor: '#fff',
-              color: '#556677',
-              borderColor: 'rgba(0,0,0,0)',
-              shadowColor: 'rgba(0,0,0,0)',
-              shadowOffsetY: 0
+              show: true
             },
             lineStyle: {
               width: 0
             }
-          },
-          backgroundColor: '#fff',
-          textStyle: {
-            color: '#5c6c7c'
           },
           padding: [10, 10],
           extraCssText: 'box-shadow: 1px 0 2px 0 rgba(163,163,163,0.5)'
@@ -116,12 +124,12 @@ export default {
           left: '4%', // 左边距，可以是百分比或像素值
           right: '4%', // 右边距，同样可以是百分比或像素值
           top: '13%', // 上边距
-          bottom: '25%'
+          bottom: '20%'
         },
         xAxis: [
           {
             type: 'category',
-            data: ['2023/01/01', '2023/01/02', '2023/01/03', '2023/01/04', '2023/01/05', '2023/01/06', '2023/01/07'],
+            data: this.date,
             axisLine: {
               lineStyle: {
                 color: '#DCE2E8'
@@ -138,14 +146,14 @@ export default {
               // 默认x轴字体大小
               fontSize: 12,
               // margin:文字到x轴的距离
-              margin: 15
+              margin: 10
             },
             axisPointer: {
               label: {
                 // padding: [11, 5, 7],
                 padding: [0, 0, 10, 0],
                 // 这里的margin和axisLabel的margin要一致!
-                margin: 15,
+                margin: 10,
                 // 移入时的字体大小
                 fontSize: 12,
                 backgroundColor: {
@@ -228,7 +236,7 @@ export default {
           {
             name: '当日订单数',
             type: 'line',
-            data: [10, 10, 30, 12, 15, 3, 7],
+            data: this.orderCount,
             symbolSize: 1,
             symbol: 'circle',
             smooth: true,
@@ -260,7 +268,7 @@ export default {
           {
             name: '当日营收',
             type: 'line',
-            data: [5, 12, 11, 14, 25, 16, 10],
+            data: this.orderAmount,
             symbolSize: 1,
             symbol: 'circle',
             smooth: true,

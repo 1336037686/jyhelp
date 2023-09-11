@@ -6,6 +6,7 @@
 import echarts from 'echarts'
 require('echarts/theme/macarons') // echarts theme
 import resize from './mixins/resize'
+import dashboardApi from '@/api/module/dashboard/dashboard-api'
 export default {
   mixins: [resize],
   props: {
@@ -29,7 +30,10 @@ export default {
   data() {
     return {
       chart: null,
-      chartData: null
+      chartData: null,
+      date: [],
+      totalData: [],
+      addData: []
     }
   },
   mounted() {
@@ -47,7 +51,17 @@ export default {
   methods: {
     initChart() {
       this.chart = echarts.init(this.$el, 'macarons')
-      this.setOptions(this.chartData)
+      this.date = []
+      this.totalData = []
+      this.addData = []
+      dashboardApi.getMemberChart().then(res => {
+        for (let i = 0; i < res.data.length; i++) {
+          this.date.push(res.data[i].date)
+          this.totalData.push({ value: res.data[i].total })
+          this.addData.push({ value: res.data[i].add })
+        }
+        this.setOptions()
+      })
     },
     setOptions() {
       this.chart.setOption({
@@ -63,28 +77,7 @@ export default {
         },
         tooltip: {
           trigger: 'axis',
-          backgroundColor: 'rgba(0,0,0,0.6)',
-          // formatter:"{b}:{c}"
-          formatter: function(params) {
-            let str = params[0].name + ' ' + params[0].data.stationName + '</br>'
-            params.forEach((item) => {
-              if (item.seriesName === '注册会员数' || item.seriesName === '回温') {
-                str +=
-                  item.marker +
-                  item.seriesName +
-                  ' : ' +
-                  item.data.value +
-                  ' ℃' +
-                  '</br>'
-              } else if (item.seriesName === '当日新增会员数') {
-                // 柱状图渐变时设置marker
-                item.marker =
-                  '<span style="display:inline-block;margin-right:5px;border-radius:10px;width:10px;height:10px;background-color:#6C50F3;"></span>'
-                str += item.marker + item.seriesName + ' : ' + item.data.value + ' m'
-              }
-            })
-            return str
-          }
+          backgroundColor: 'rgba(0,0,0,0.6)'
         },
         legend: {
           // 修改legend的高度宽度
@@ -103,11 +96,7 @@ export default {
           textStyle: {
             color: '#B4B4B4'
           },
-          top: '3%',
-          // 选择关闭的legend
-          selected: {
-            回温: false
-          }
+          top: '3%'
         },
         grid: {
           x: '8%',
@@ -118,7 +107,7 @@ export default {
         xAxis: [
           {
             // type:'category',
-            data: ['1km', '2km', '3km', '4km', '5km', '6km'],
+            data: this.date,
             boundaryGap: true,
             axisLine: {
               lineStyle: {
@@ -132,7 +121,7 @@ export default {
         ],
         yAxis: [
           {
-            name: '供回温度(℃）',
+            name: '注册会员数',
             nameLocation: 'middle',
             nameTextStyle: {
               padding: [3, 4, 50, 6]
@@ -212,93 +201,7 @@ export default {
               }
             },
             // data中可以使用对象，value代表相应的值，另外可加入自定义的属性
-            data: [
-              {
-                value: 1,
-                stationName: 's1'
-              },
-              {
-                value: 3,
-                stationName: 's2'
-              },
-              {
-                value: 4,
-                stationName: 's3'
-              },
-              {
-                value: 9,
-                stationName: 's4'
-              },
-              {
-                value: 3,
-                stationName: 's5'
-              },
-              {
-                value: 2,
-                stationName: 's6'
-              }
-            ]
-          },
-          {
-            name: '回温',
-            type: 'line',
-            smooth: true,
-            showSymbol: true,
-            symbol: 'emptyCircle',
-            symbolSize: 12,
-            yAxisIndex: 0,
-            areaStyle: {
-              normal: {
-                color: new echarts.graphic.LinearGradient(
-                  0,
-                  0,
-                  0,
-                  1,
-                  [
-                    {
-                      offset: 0,
-                      color: 'rgba(199, 237, 250,0.5)'
-                    },
-                    {
-                      offset: 1,
-                      color: 'rgba(199, 237, 250,0.2)'
-                    }
-                  ],
-                  false
-                )
-              }
-            },
-            itemStyle: {
-              normal: {
-                color: '#3bbc86'
-              }
-            },
-            data: [
-              {
-                value: 31,
-                stationName: 's1'
-              },
-              {
-                value: 36,
-                stationName: 's2'
-              },
-              {
-                value: 54,
-                stationName: 's3'
-              },
-              {
-                value: 89,
-                stationName: 's4'
-              },
-              {
-                value: 73,
-                stationName: 's5'
-              },
-              {
-                value: 22,
-                stationName: 's6'
-              }
-            ]
+            data: this.totalData
           },
           {
             name: '当日新增会员数',
@@ -321,33 +224,7 @@ export default {
                 barBorderRadius: [30, 30, 0, 0]
               }
             },
-
-            data: [
-              {
-                value: 11,
-                stationName: 's1'
-              },
-              {
-                value: 34,
-                stationName: 's2'
-              },
-              {
-                value: 54,
-                stationName: 's3'
-              },
-              {
-                value: 39,
-                stationName: 's4'
-              },
-              {
-                value: 63,
-                stationName: 's5'
-              },
-              {
-                value: 24,
-                stationName: 's6'
-              }
-            ]
+            data: this.addData
           }
         ]
       })
