@@ -7,13 +7,14 @@ import com.jyadmin.module.blog.service.BlogService;
 import org.springframework.stereotype.Service;
 
 /**
-* @author 13360
-* @description 针对表【tb_blog(博客文章表)】的数据库操作Service实现
-* @createDate 2022-04-09 16:39:13
-*/
+ * 博客文章表 ServiceImpl <br>
+ * @author jyadmin code generate <br>
+ * @version 1.0 <br>
+ * Create by 2023-09-12 17:20:12 <br>
+ * @description: BlogServiceImpl <br>
+ */
 @Service
-public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog>
-    implements BlogService{
+public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements BlogService {
 
 }
 

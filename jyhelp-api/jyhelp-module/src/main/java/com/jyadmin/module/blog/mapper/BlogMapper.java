@@ -1,14 +1,19 @@
 package com.jyadmin.module.blog.mapper;
 
-import com.jyadmin.module.blog.domain.Blog;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.jyadmin.module.blog.domain.Blog;
+import org.apache.ibatis.annotations.Mapper;
+
 
 /**
-* @author 13360
-* @description 针对表【tb_blog(博客文章表)】的数据库操作Mapper
-* @createDate 2022-04-09 16:39:13
-* @Entity com.jyblog.module.blog.domain.Blog
-*/
+ * 博客文章表 Mapper <br>
+ * @author jyadmin code generate <br>
+ * @version 1.0 <br>
+ * Create by 2023-09-12 17:20:12 <br>
+ * @Entity com.jyadmin.module.blog.domain.Blog
+ * @description: BlogMapper <br>
+ */
+@Mapper
 public interface BlogMapper extends BaseMapper<Blog> {
 
 }

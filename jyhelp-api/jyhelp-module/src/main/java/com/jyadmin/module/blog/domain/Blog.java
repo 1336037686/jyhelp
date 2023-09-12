@@ -1,23 +1,27 @@
 package com.jyadmin.module.blog.domain;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.jyadmin.domain.base.BaseEntity;
 import lombok.Data;
-
-import java.io.Serializable;
+import lombok.experimental.Accessors;
+import java.time.LocalDateTime;
+import java.time.LocalDateTime;
 
 /**
- * 博客文章表
- * @TableName tb_blog
+ * 博客文章表 <br>
+ * @TableName tb_blog <br>
+ * @author jyadmin code generate <br>
+ * @version 1.0 <br>
+ * Create by 2023-09-12 17:20:12 <br>
+ * @description: Blog <br>
  */
 @TableName(value ="tb_blog")
+@Accessors(chain = true)
 @Data
 public class Blog extends BaseEntity implements Serializable {
-
-    @TableField(exist = false)
-    private static final long serialVersionUID = 1L;
-
 
     /**
      * 文章名称
@@ -35,13 +39,13 @@ public class Blog extends BaseEntity implements Serializable {
      * 类别
      */
     @TableField(value = "category")
-    private String category;
+    private Long category;
 
     /**
      * 标签
      */
     @TableField(value = "tag")
-    private String tag;
+    private Long tag;
 
     /**
      * 封面
@@ -50,28 +54,16 @@ public class Blog extends BaseEntity implements Serializable {
     private String cover;
 
     /**
-     * 文章来源
-     */
-    @TableField(value = "source")
-    private Integer source;
-
-    /**
      * 文章内容
      */
     @TableField(value = "content")
     private String content;
 
     /**
-     * 状态
+     * 状态（草稿、发布）
      */
     @TableField(value = "status")
     private Integer status;
-
-    /**
-     * 仅自己可见
-     */
-    @TableField(value = "visible")
-    private Integer visible;
 
     /**
      * 作者
@@ -79,4 +71,6 @@ public class Blog extends BaseEntity implements Serializable {
     @TableField(value = "author")
     private String author;
 
+    @TableField(exist = false)
+    private static final long serialVersionUID = 1L;
 }
