@@ -87,6 +87,7 @@ public class BlogController {
                             .eq(Objects.nonNull(vo.getTag()), Blog::getTag, vo.getTag())
                             .eq(Objects.nonNull(vo.getStatus()), Blog::getStatus, vo.getStatus())
                             .like(StringUtils.isNotBlank(vo.getAuthor()), Blog::getAuthor, vo.getAuthor())
+                            .orderByDesc(Blog::getCreateTime)
                 )
         );
     }
