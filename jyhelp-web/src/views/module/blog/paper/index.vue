@@ -11,13 +11,19 @@
           <el-input v-model="queryForm.title" placeholder="文章名称" />
         </el-form-item>
         <el-form-item label="类别：">
-          <el-input v-model="queryForm.category" placeholder="类别" />
+          <el-select v-model="queryForm.category" placeholder="类别" style="width: 100%">
+            <el-option v-for="item in categoryOptions" :key="item.code" :label="item.name" :value="item.code" />
+          </el-select>
         </el-form-item>
         <el-form-item label="标签：">
-          <el-input v-model="queryForm.tag" placeholder="标签" />
+          <el-select v-model="queryForm.tag" placeholder="标签" style="width: 100%">
+            <el-option v-for="item in tagOptions" :key="item.code" :label="item.name" :value="item.code" />
+          </el-select>
         </el-form-item>
         <el-form-item label="状态：">
-          <el-input v-model="queryForm.status" placeholder="状态" />
+          <el-select v-model="queryForm.status" placeholder="状态" style="width: 100%">
+            <el-option v-for="item in blogStatusOptions" :key="item.code" :label="item.name" :value="item.code" />
+          </el-select>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" icon="el-icon-search" @click="handleQuery">查 询</el-button>
@@ -55,11 +61,31 @@
       >
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column type="index" width="80" label="序号" align="center" />
-        <el-table-column v-if="checkColumnDisplayed('title', columnsData.columns)" prop="title" label="文章" align="center" show-overflow-tooltip />
-        <el-table-column v-if="checkColumnDisplayed('category', columnsData.columns)" prop="category" label="类别" align="center" show-overflow-tooltip />
-        <el-table-column v-if="checkColumnDisplayed('tag', columnsData.columns)" prop="tag" label="标签" align="center" show-overflow-tooltip />
-        <el-table-column v-if="checkColumnDisplayed('cover', columnsData.columns)" prop="cover" label="封面" align="center" show-overflow-tooltip />
-        <el-table-column v-if="checkColumnDisplayed('status', columnsData.columns)" prop="status" label="状态" align="center" show-overflow-tooltip />
+        <el-table-column v-if="checkColumnDisplayed('title', columnsData.columns)" prop="title" label="文章" align="center" show-overflow-tooltip>
+          <template slot-scope="scope">
+            <el-button type="text" @click="handleTitleClick(scope.row.content)"> {{ scope.row.title }} </el-button>
+          </template>
+        </el-table-column>
+        <el-table-column v-if="checkColumnDisplayed('category', columnsData.columns)" prop="category" label="类别" align="center" show-overflow-tooltip>
+          <template slot-scope="scope">
+            {{ getNameByCode(categoryOptions, scope.row.category) }}
+          </template>
+        </el-table-column>
+        <el-table-column v-if="checkColumnDisplayed('tag', columnsData.columns)" prop="tag" label="标签" align="center" show-overflow-tooltip>
+          <template slot-scope="scope">
+            {{ getNameByCode(tagOptions, scope.row.tag) }}
+          </template>
+        </el-table-column>
+        <el-table-column v-if="checkColumnDisplayed('cover', columnsData.columns)" prop="cover" label="封面" align="center" show-overflow-tooltip>
+          <template slot-scope="scope">
+            <el-avatar shape="square" size="large" :src="imgUrlPrefix + scope.row.cover" />
+          </template>
+        </el-table-column>
+        <el-table-column v-if="checkColumnDisplayed('status', columnsData.columns)" prop="status" label="状态" align="center" show-overflow-tooltip>
+          <template slot-scope="scope">
+            {{ getNameByCode(blogStatusOptions, scope.row.status) }}
+          </template>
+        </el-table-column>
         <el-table-column v-if="checkColumnDisplayed('createTime', columnsData.columns)" prop="createTime" label="创建时间" align="center" show-overflow-tooltip />
       </el-table>
       <div style="text-align: center;margin-top: 10px">
@@ -77,10 +103,15 @@
     <BlogForm :id="editData.id" :title="editData.title" :visible.sync="editData.visiable" />
     <BlogDetail :id="showData.id" :title="showData.title" :visible.sync="showData.visiable" />
     <select-columns :title="columnsData.title" :columns="columnsData.columns" :visible.sync="columnsData.visiable" />
+    <el-dialog title="文章查看" :visible.sync="blogData.dialogVisible" class="jy-dialog" width="60%">
+      <div v-html="blogData.content" />
+    </el-dialog>
   </div>
 </template>
 
 <script>
+import tagApi from '@/api/module/tag/tag-api'
+import categoryApi from '@/api/module/category/category-api'
 import blogApi from '@/api/module/blog/blog-api'
 import BlogForm from '@/views/module/blog/paper/blog-form'
 import BlogDetail from '@/views/module/blog/paper/blog-detail'
@@ -90,6 +121,7 @@ export default {
   data() {
     return {
       deleteLoading: false,
+      imgUrlPrefix: '/api/file-process/download/',
       queryFormVisiable: true,
       queryForm: {
         title: null,
@@ -121,6 +153,10 @@ export default {
         current: null,
         record: []
       },
+      blogData: {
+        dialogVisible: false,
+        content: null
+      },
       columnsData: {
         visiable: false,
         columns: [
@@ -131,13 +167,34 @@ export default {
           { key: 'status', label: '状态', _showed: true },
           { key: 'createTime', label: '创建时间', _showed: true }
         ]
-      }
+      },
+      blogStatusOptions: [],
+      tagOptions: [],
+      categoryOptions: []
     }
   },
   created() {
+    this.getDict()
     this.getList()
   },
   methods: {
+    getDict() {
+      this.getDictByCode('module_blog_status').then(res => {
+        this.blogStatusOptions = res.data
+      })
+      tagApi.list().then(res => {
+        this.tagOptions = []
+        for (let i = 0; i < res.data.length; i++) {
+          this.tagOptions.push({ name: res.data[i].name, code: res.data[i].id })
+        }
+      })
+      categoryApi.list().then(res => {
+        this.categoryOptions = []
+        for (let i = 0; i < res.data.length; i++) {
+          this.categoryOptions.push({ name: res.data[i].name, code: res.data[i].id })
+        }
+      })
+    },
     getList() {
       this.tableData.loading = true
       const queryForm = { ...this.queryForm, pageNumber: this.tableData.pageNumber, pageSize: this.tableData.pageSize }
@@ -217,6 +274,10 @@ export default {
     handleChangePage(page) {
       this.tableData.pageNumber = page
       this.getList()
+    },
+    handleTitleClick(content) {
+      this.blogData.dialogVisible = true
+      this.blogData.content = content
     }
   }
 }

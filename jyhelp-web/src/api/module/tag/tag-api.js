@@ -16,6 +16,13 @@ export default {
     })
   },
 
+  list() {
+    return request({
+      url: '/api/tag/list',
+      method: 'get'
+    })
+  },
+
   add(data, idempotentToken) {
     return request({
       url: '/api/tag/create',

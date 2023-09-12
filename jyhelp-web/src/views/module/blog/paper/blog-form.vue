@@ -38,33 +38,54 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="状态：" prop="status">
-              <el-input v-model="form.status" />
+              <el-select v-model="form.status" placeholder="状态" style="width: 100%">
+                <el-option v-for="item in blogStatusOptions" :key="item.code" :label="item.name" :value="item.code" />
+              </el-select>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
             <el-form-item label="类别：" prop="category">
-              <el-input v-model="form.category" />
+              <el-select v-model="form.category" placeholder="状态" style="width: 100%">
+                <el-option v-for="item in categoryOptions" :key="item.code" :label="item.name" :value="item.code" />
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="标签：" prop="tag">
-              <el-input v-model="form.tag" />
+              <el-select v-model="form.tag" placeholder="状态" style="width: 100%">
+                <el-option v-for="item in tagOptions" :key="item.code" :label="item.name" :value="item.code" />
+              </el-select>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="24">
             <el-form-item label="封面：" prop="cover">
-              <el-input v-model="form.cover" />
+              <el-upload
+                ref="fileUpload"
+                name="file"
+                :auto-upload="false"
+                list-type="picture-card"
+                accept="image/jpeg,image/jpg,image/png,image/gif"
+                action="Fake Action"
+                :limit="1"
+                :file-list="fileList"
+                :on-exceed="handleFileExceed"
+                :on-remove="handleFileRemove"
+                :on-change="handleFileUploadChange"
+                :http-request="handleFileUploadRequest"
+              >
+                <i class="el-icon-plus" />
+              </el-upload>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="24">
             <el-form-item label="文章内容：" prop="content">
-              <el-input v-model="form.content" />
+              <Tinymce ref="editor" v-model="form.content" :height="400" width="100%" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -80,8 +101,14 @@
 <script>
 import { getIdempotentToken } from '@/api/system/auth/jy-auth'
 import blogApi from '@/api/module/blog/blog-api'
+import Tinymce from '@/components/Tinymce'
+import fileProcessApi from '@/api/system/file/jy-file-process'
+import tagApi from '@/api/module/tag/tag-api'
+import categoryApi from '@/api/module/category/category-api'
+import fileRecordApi from '@/api/system/file/jy-file-record'
 export default {
   name: 'BlogForm',
+  components: { Tinymce },
   props: {
     title: {
       type: String,
@@ -139,11 +166,19 @@ export default {
         author: [
           { required: true, message: '请输入作者', trigger: 'blur' }
         ]
-      }
+      },
+      blogStatusOptions: [],
+      tagOptions: [],
+      categoryOptions: [],
+      imgUrlPrefix: '/api/file-process/download/',
+      fileList: [],
+      fileDisabled: false
     }
   },
   watch: {
     async visible(newVal) {
+      this.fileList = []
+      this.fileDisabled = false
       this.tmpVisible = newVal
       if (newVal) {
         await this.getIdempotentToken()
@@ -162,7 +197,27 @@ export default {
     },
     deep: true
   },
+  created() {
+    this.getDict()
+  },
   methods: {
+    getDict() {
+      this.getDictByCode('module_blog_status').then(res => {
+        this.blogStatusOptions = res.data
+      })
+      tagApi.list().then(res => {
+        this.tagOptions = []
+        for (let i = 0; i < res.data.length; i++) {
+          this.tagOptions.push({ name: res.data[i].name, code: res.data[i].id })
+        }
+      })
+      categoryApi.list().then(res => {
+        this.categoryOptions = []
+        for (let i = 0; i < res.data.length; i++) {
+          this.categoryOptions.push({ name: res.data[i].name, code: res.data[i].id })
+        }
+      })
+    },
     async getIdempotentToken() {
       this.initloading = true
       await getIdempotentToken().then(res => {
@@ -208,11 +263,24 @@ export default {
         this.submitLoading = false
       })
     },
-    getById(id) {
+    async getById(id) {
       this.initloading = true
-      blogApi.getById(id).then(response => {
+      await blogApi.getById(id).then(response => {
         this.initloading = false
         this.form = response.data
+        this.$refs.editor.setContent(this.form.content)
+      }).catch(e => {
+        this.initloading = false
+        return
+      })
+      if (this.form.cover === null) {
+        this.initloading = false
+        return
+      }
+      this.fileList = []
+      await fileRecordApi.getById(this.form.cover).then(response => {
+        this.initloading = false
+        this.fileList.push({ name: response.data.realName, url: this.imgUrlPrefix + response.data.id })
       }).catch(e => {
         this.initloading = false
       })
@@ -220,7 +288,47 @@ export default {
     resetForm(formName) {
       this.form.id = null
       this.$refs[formName].resetFields()
+      this.$refs.editor.setContent('')
       this.tmpVisible = false
+    },
+    handleFileExceed() {
+      this.$notify.warning({ title: '提示', message: '最多上传一张图片' })
+    },
+    handleFileRemove(file, fileList) {
+      this.form.cover = null
+    },
+    handleFileUploadChange(file, fileList) {
+      const isIMAGE = (file.raw.type === 'image/jpeg' || file.raw.type === 'image/png' || file.raw.type === 'image/gif')
+      const isLt1M = file.size / 1024 / 1024 < 1
+      if (!isIMAGE) {
+        this.$notify.error('上传文件只能是图片格式!')
+        fileList.splice(0, 1)
+        this.fileList = fileList
+        return false
+      }
+      if (!isLt1M) {
+        this.$notify.error('上传文件大小不能超过 1MB!')
+        fileList.splice(0, 1)
+        this.fileList = fileList
+        return false
+      }
+      this.fileList = fileList
+      // 上传文件
+      if (!this.fileList || this.fileList.length === 0) {
+        this.$notify.error('请选择上传文件!')
+        return
+      }
+      const relevance = 'blog' // 测试模块
+      const formData = new FormData()
+      this.fileList.forEach(item => {
+        formData.append('file', item.raw)
+      })
+      fileProcessApi.upload(relevance, formData).then(res => {
+        this.form.cover = res.data.fileRecordId
+      })
+    },
+    handleFileUploadRequest() {
+      console.log('handleFileUploadRequest')
     }
   }
 }

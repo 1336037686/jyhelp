@@ -16,6 +16,13 @@ export default {
     })
   },
 
+  list() {
+    return request({
+      url: '/api/category/list',
+      method: 'get'
+    })
+  },
+
   add(data) {
     return request({
       url: '/api/category/create',

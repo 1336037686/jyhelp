@@ -22,39 +22,27 @@
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">
-            摘要
-          </template>
-          {{ form.intro }}
-        </el-descriptions-item>
-        <el-descriptions-item>
-          <template slot="label">
             类别
           </template>
-          {{ form.category }}
+          {{ getNameByCode(categoryOptions, form.category) }}
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">
             标签
           </template>
-          {{ form.tag }}
+          {{ getNameByCode(tagOptions, form.tag) }}
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">
             封面
           </template>
-          {{ form.cover }}
+          <el-avatar shape="square" size="large" :src="form.cover" />
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">
-            文章内容
+            状态
           </template>
-          {{ form.content }}
-        </el-descriptions-item>
-        <el-descriptions-item>
-          <template slot="label">
-            状态（草稿、发布）
-          </template>
-          {{ form.status }}
+          {{ getNameByCode(blogStatusOptions, form.status) }}
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">
@@ -72,6 +60,8 @@
 
 <script>
 import blogApi from '@/api/module/blog/blog-api'
+import tagApi from '@/api/module/tag/tag-api'
+import categoryApi from '@/api/module/category/category-api'
 export default {
   name: 'BlogDetail',
   props: {
@@ -91,6 +81,7 @@ export default {
   data() {
     return {
       tmpVisible: this.visible,
+      imgUrlPrefix: '/api/file-process/download/',
       initloading: false,
       form: {
         id: null,
@@ -102,7 +93,10 @@ export default {
         content: null,
         status: null,
         author: null
-      }
+      },
+      blogStatusOptions: [],
+      tagOptions: [],
+      categoryOptions: []
     }
   },
   watch: {
@@ -117,12 +111,33 @@ export default {
     },
     deep: true
   },
+  created() {
+    this.getDict()
+  },
   methods: {
+    getDict() {
+      this.getDictByCode('module_blog_status').then(res => {
+        this.blogStatusOptions = res.data
+      })
+      tagApi.list().then(res => {
+        this.tagOptions = []
+        for (let i = 0; i < res.data.length; i++) {
+          this.tagOptions.push({ name: res.data[i].name, code: res.data[i].id })
+        }
+      })
+      categoryApi.list().then(res => {
+        this.categoryOptions = []
+        for (let i = 0; i < res.data.length; i++) {
+          this.categoryOptions.push({ name: res.data[i].name, code: res.data[i].id })
+        }
+      })
+    },
     getById(id) {
       this.initloading = true
       blogApi.getById(id).then(response => {
         this.initloading = false
         this.form = response.data
+        this.form.cover = this.imgUrlPrefix + this.form.cover
       }).catch(e => {
         this.initloading = false
       })

@@ -333,6 +333,7 @@ export default {
         this.initloading = false
         return
       }
+      this.fileList = []
       await fileRecordApi.getById(this.form.productImg).then(response => {
         this.initloading = false
         this.fileList.push({ name: response.data.realName, url: this.imgUrlPrefix + response.data.id })
