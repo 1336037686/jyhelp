@@ -100,7 +100,7 @@ public class WorkOrderController {
                         .like(StringUtils.isNotBlank(vo.getPhone()), WorkOrder::getPhone, vo.getPhone())
                         .like(StringUtils.isNotBlank(vo.getEmail()), WorkOrder::getEmail, vo.getEmail())
                         .eq(Objects.nonNull(vo.getStatus()), WorkOrder::getStatus, vo.getStatus())
-                        .eq(WorkOrder::getStatus, GlobalConstants.SysDeleted.EXIST.getValue())
+                        .eq(WorkOrder::getDeleted, GlobalConstants.SysDeleted.EXIST.getValue())
                         .exists(StringUtils.isNotBlank(vo.getUsername()),
                                 "SELECT 1 FROM sys_user su " +
                                 "WHERE su.deleted = 0 and su.id = user_id " +
