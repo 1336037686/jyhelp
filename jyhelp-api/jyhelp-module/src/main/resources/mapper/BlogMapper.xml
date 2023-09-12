@@ -8,7 +8,7 @@
             <result property="category" column="category" jdbcType="BIGINT"/>
             <result property="tag" column="tag" jdbcType="BIGINT"/>
             <result property="cover" column="cover" jdbcType="VARCHAR"/>
-            <result property="content" column="content" jdbcType="TEXT"/>
+            <result property="content" column="content" jdbcType="VARCHAR"/>
             <result property="status" column="status" jdbcType="INTEGER"/>
             <result property="author" column="author" jdbcType="VARCHAR"/>
             <result property="createBy" column="create_by" jdbcType="BIGINT"/>
