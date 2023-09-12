@@ -12,7 +12,7 @@ import java.io.Serializable;
  * 工单表 <br>
  * @author jyadmin code generate <br>
  * @version 1.0 <br>
- * Create by 2023-09-11 19:57:27 <br>
+ * Create by 2023-09-12 09:27:09 <br>
  * @description: WorkOrderCreateReqVO <br>
  */
 @ApiModel("工单表-新增-数据模型")
@@ -62,9 +62,14 @@ public class WorkOrderCreateReqVO implements Serializable {
     private String email;
 
     /**
-     * 工单状态（待处理、已处理、不予解决）
+     * 工单状态
      */
     @ApiModelProperty(value = "工单状态", name = "status")
-    @NotBlank(message = "工单状态不能为空")
     private String status;
+
+    /**
+     * 处理备注
+     */
+    @ApiModelProperty(value = "处理备注", name = "handleRemark")
+    private String handleRemark;
 }

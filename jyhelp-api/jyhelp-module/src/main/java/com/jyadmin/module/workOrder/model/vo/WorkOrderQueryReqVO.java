@@ -11,7 +11,7 @@ import java.io.Serializable;
  * 工单表 <br>
  * @author jyadmin code generate <br>
  * @version 1.0 <br>
- * Create by 2023-09-11 19:57:27 <br>
+ * Create by 2023-09-12 09:27:09 <br>
  * @description: WorkOrderQueryReqVO <br>
  */
 @ApiModel("工单表-查询-数据模型")
@@ -59,4 +59,5 @@ public class WorkOrderQueryReqVO extends BasePageVO implements Serializable {
      */
     @ApiModelProperty(value = "工单状态", name = "status")
     private String status;
+
 }

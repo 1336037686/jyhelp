@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
  * @TableName tb_work_order <br>
  * @author jyadmin code generate <br>
  * @version 1.0 <br>
- * Create by 2023-09-11 19:57:27 <br>
+ * Create by 2023-09-12 09:27:09 <br>
  * @description: WorkOrder <br>
  */
 @TableName(value ="tb_work_order")
@@ -70,6 +70,12 @@ public class WorkOrder extends BaseEntity implements Serializable {
     @TableField(value = "version")
     @Version
     private Long version;
+
+    /**
+     * 处理备注
+     */
+    @TableField(value = "handle_remark")
+    private String handleRemark;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
