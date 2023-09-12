@@ -4,15 +4,20 @@ import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.google.common.collect.Lists;
+import com.jyadmin.consts.GlobalConstants;
 import com.jyadmin.domain.PageResult;
 import com.jyadmin.domain.Result;
 import com.jyadmin.annotation.Idempotent;
 import com.jyadmin.annotation.RateLimit;
 import com.jyadmin.module.workOrder.domain.WorkOrder;
+import com.jyadmin.module.workOrder.model.dto.WorkOrderDTO;
 import com.jyadmin.module.workOrder.model.vo.WorkOrderCreateReqVO;
 import com.jyadmin.module.workOrder.model.vo.WorkOrderQueryReqVO;
 import com.jyadmin.module.workOrder.model.vo.WorkOrderUpdateReqVO;
 import com.jyadmin.module.workOrder.service.WorkOrderService;
+import com.jyadmin.system.user.domain.User;
+import com.jyadmin.system.user.service.UserService;
 import com.jyadmin.util.DataUtil;
 import com.jyadmin.util.PageUtil;
 import com.jyadmin.util.ResultUtil;
@@ -24,8 +29,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Stream;
 
 /**
  * 工单 <br>
@@ -42,6 +49,8 @@ public class WorkOrderController {
 
     @Resource
     private WorkOrderService workOrderService;
+    @Resource
+    private UserService userService;
 
     @RateLimit @Idempotent
     @ApiOperation(value = "新增工单", notes = "")
@@ -72,24 +81,32 @@ public class WorkOrderController {
     @GetMapping("/query/{id}")
     @PreAuthorize("@jy.check('workOrder:queryById')")
     public Result<Object> doQueryById(@PathVariable String id) {
-        return Result.ok(workOrderService.getById(id));
+        WorkOrder workOrder = workOrderService.getById(id);
+        User user = userService.getById(workOrder.getUserId());
+        WorkOrderDTO workOrderDTO = BeanUtil.copyProperties(workOrder, WorkOrderDTO.class);
+        workOrderDTO.setUsername(user.getUsername());
+        return Result.ok(workOrderDTO);
     }
 
     @ApiOperation(value = "分页查询工单", notes = "")
     @GetMapping("/query")
     @PreAuthorize("@jy.check('workOrder:query')")
-    public PageResult<WorkOrder> doQueryPage(WorkOrderQueryReqVO vo) {
-        return PageUtil.toPageResult(
-                this.workOrderService.page(new Page<>(vo.getPageNumber(), vo.getPageSize()),
-                        new LambdaQueryWrapper<WorkOrder>()
-                            .eq(Objects.nonNull(vo.getId()), WorkOrder::getId, vo.getId())
-                            .eq(Objects.nonNull(vo.getUserId()), WorkOrder::getUserId, vo.getUserId())
-                            .eq(Objects.nonNull(vo.getType()), WorkOrder::getType, vo.getType())
-                            .eq(Objects.nonNull(vo.getTitle()), WorkOrder::getTitle, vo.getTitle())
-                            .eq(Objects.nonNull(vo.getPhone()), WorkOrder::getPhone, vo.getPhone())
-                            .eq(Objects.nonNull(vo.getEmail()), WorkOrder::getEmail, vo.getEmail())
-                            .eq(Objects.nonNull(vo.getStatus()), WorkOrder::getStatus, vo.getStatus())
-                )
-        );
+    public PageResult<WorkOrderDTO> doQueryPage(WorkOrderQueryReqVO vo) {
+        return PageUtil.toPageResult(this.workOrderService.getPage(new Page<>(vo.getPageNumber(), vo.getPageSize()),
+                new LambdaQueryWrapper<WorkOrder>()
+                        .eq(Objects.nonNull(vo.getId()), WorkOrder::getId, vo.getId())
+                        .eq(Objects.nonNull(vo.getType()), WorkOrder::getType, vo.getType())
+                        .like(StringUtils.isNotBlank(vo.getTitle()), WorkOrder::getTitle, vo.getTitle())
+                        .like(StringUtils.isNotBlank(vo.getPhone()), WorkOrder::getPhone, vo.getPhone())
+                        .like(StringUtils.isNotBlank(vo.getEmail()), WorkOrder::getEmail, vo.getEmail())
+                        .eq(Objects.nonNull(vo.getStatus()), WorkOrder::getStatus, vo.getStatus())
+                        .eq(WorkOrder::getStatus, GlobalConstants.SysDeleted.EXIST.getValue())
+                        .exists(StringUtils.isNotBlank(vo.getUsername()),
+                                "SELECT 1 FROM sys_user su " +
+                                "WHERE su.deleted = 0 and su.id = user_id " +
+                                "and su.username LIKE CONCAT('%', {0}, '%')",
+                                vo.getUsername())
+                        .orderByDesc(WorkOrder::getCreateTime)
+        ));
     }
 }

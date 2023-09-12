@@ -21,7 +21,7 @@
     <sql id="Base_Column_List">
         id,
         user_id,
-        type,
+        `type`,
         title,
         content,
         phone,
@@ -34,4 +34,12 @@
         update_time,
         deleted
     </sql>
+    <select id="selectWorkOrderPage" resultType="com.jyadmin.module.workOrder.model.dto.WorkOrderDTO">
+        SELECT * FROM (
+          SELECT
+              two.*, su.username "username"
+          FROM tb_work_order two
+          INNER JOIN sys_user su ON su.id = two.user_id
+       ) t ${ew.customSqlSegment}
+    </select>
 </mapper>

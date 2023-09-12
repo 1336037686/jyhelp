@@ -1,8 +1,13 @@
 package com.jyadmin.module.workOrder.mapper;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jyadmin.module.workOrder.domain.WorkOrder;
+import com.jyadmin.module.workOrder.model.dto.WorkOrderDTO;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 
 /**
@@ -15,6 +20,8 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface WorkOrderMapper extends BaseMapper<WorkOrder> {
+
+    Page<WorkOrderDTO> selectWorkOrderPage(Page<Object> page, @Param(Constants.WRAPPER) LambdaQueryWrapper<WorkOrder> wrapper);
 
 }
 

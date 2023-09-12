@@ -27,8 +27,8 @@ public class WorkOrderQueryReqVO extends BasePageVO implements Serializable {
     /**
      * 创建用户
      */
-    @ApiModelProperty(value = "创建用户", name = "userId")
-    private Long userId;
+    @ApiModelProperty(value = "创建用户", name = "username")
+    private String username;
 
     /**
      * 工单类别

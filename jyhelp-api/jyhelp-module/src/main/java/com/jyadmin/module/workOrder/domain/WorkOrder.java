@@ -1,6 +1,8 @@
 package com.jyadmin.module.workOrder.domain;
 
 import com.baomidou.mybatisplus.annotation.*;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.jyadmin.domain.base.BaseEntity;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -25,13 +27,14 @@ public class WorkOrder extends BaseEntity implements Serializable {
     /**
      * 创建用户
      */
+    @JsonSerialize(using = ToStringSerializer.class)
     @TableField(value = "user_id")
     private Long userId;
 
     /**
      * 工单类别
      */
-    @TableField(value = "type")
+    @TableField(value = "`type`")
     private String type;
 
     /**
