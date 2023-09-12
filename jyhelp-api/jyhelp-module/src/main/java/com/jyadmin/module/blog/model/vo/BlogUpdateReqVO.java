@@ -72,8 +72,8 @@ public class BlogUpdateReqVO implements Serializable {
      * 状态（草稿、发布）
      */
     @ApiModelProperty(value = "状态（草稿、发布）", name = "status")
-    @NotNull(message = "状态（草稿、发布）不能为空")
-    private Integer status;
+    @NotBlank(message = "状态（草稿、发布）不能为空")
+    private String status;
 
     /**
      * 作者

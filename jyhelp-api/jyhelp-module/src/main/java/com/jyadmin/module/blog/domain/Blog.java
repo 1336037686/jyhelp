@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.jyadmin.domain.base.BaseEntity;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -41,12 +43,14 @@ public class Blog extends BaseEntity implements Serializable {
      * 类别
      */
     @TableField(value = "category")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long category;
 
     /**
      * 标签
      */
     @TableField(value = "tag")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long tag;
 
     /**
@@ -65,7 +69,7 @@ public class Blog extends BaseEntity implements Serializable {
      * 状态（草稿、发布）
      */
     @TableField(value = "status")
-    private Integer status;
+    private String status;
 
     /**
      * 作者

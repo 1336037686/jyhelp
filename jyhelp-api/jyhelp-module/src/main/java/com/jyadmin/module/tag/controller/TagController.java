@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -75,8 +76,16 @@ public class TagController {
         return Result.ok(tagService.getById(Long.parseLong(id)));
     }
 
+    @ApiOperation(value = "列表查询标签", notes = "")
+    @GetMapping("/list")
+    @PreAuthorize("@jy.check('tag:queryList')")
+    public Result<List<Tag>> doQueryList(TagQueryVO vo) {
+        return Result.ok(this.tagService.list(new LambdaQueryWrapper<Tag>()
+                .like(StringUtils.isNotBlank(vo.getName()), Tag::getName, vo.getName())
+                .like(StringUtils.isNotBlank(vo.getCode()), Tag::getCode, vo.getCode())
+        ));
+    }
 
-    @RateLimit(period = 1, count = 2) // 添加限流注解，每秒（period）2次 （count），不做设置会默认采用JyLimitProperties配置
     @ApiOperation(value = "分页查询标签", notes = "")
     @PreAuthorize("@jy.check('tag:queryPage')")
     @GetMapping("/query")

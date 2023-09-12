@@ -78,6 +78,15 @@ public class CategoryController {
         return Result.ok(categoryService.getById(Long.parseLong(id)));
     }
 
+    @ApiOperation(value = "列表查询类别", notes = "")
+    @GetMapping("/list")
+    public Result<List<Category>> doQueryList(CategoryQueryVO vo) {
+        return Result.ok(this.categoryService.list(new LambdaQueryWrapper<Category>()
+                .like(StringUtils.isNotBlank(vo.getName()), Category::getName, vo.getName())
+                .like(StringUtils.isNotBlank(vo.getCode()), Category::getCode, vo.getCode())
+        ));
+    }
+
     @ApiOperation(value = "分页查询类别", notes = "")
     @GetMapping("/query")
     public PageResult<Category> doQueryPage(CategoryQueryVO vo) {

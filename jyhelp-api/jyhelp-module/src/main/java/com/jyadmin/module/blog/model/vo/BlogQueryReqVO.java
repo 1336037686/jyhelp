@@ -46,7 +46,7 @@ public class BlogQueryReqVO extends BasePageVO implements Serializable {
      * 状态（草稿、发布）
      */
     @ApiModelProperty(value = "状态（草稿、发布）", name = "status")
-    private Integer status;
+    private String status;
 
     /**
      * 作者
