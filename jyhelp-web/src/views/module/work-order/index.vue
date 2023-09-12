@@ -8,10 +8,12 @@
     <el-card class="box-card" shadow="always">
       <el-form v-show="queryFormVisiable" :inline="true" size="mini" :model="queryForm" label-width="120px">
         <el-form-item label="创建用户：">
-          <el-input v-model="queryForm.userId" placeholder="创建用户" />
+          <el-input v-model="queryForm.username" placeholder="创建用户" />
         </el-form-item>
         <el-form-item label="工单类别：">
-          <el-input v-model="queryForm.type" placeholder="工单类别" />
+          <el-select v-model="queryForm.type" style="width: 90%">
+            <el-option v-for="(item, index) in workOrderCategoryOptions" :key="'category_' + index" :label="item.name" :value="item.code" />
+          </el-select>
         </el-form-item>
         <el-form-item label="工单标题：">
           <el-input v-model="queryForm.title" placeholder="工单标题" />
@@ -23,7 +25,9 @@
           <el-input v-model="queryForm.email" placeholder="联系邮箱" />
         </el-form-item>
         <el-form-item label="工单状态：">
-          <el-input v-model="queryForm.status" placeholder="工单状态" />
+          <el-select v-model="queryForm.status" style="width: 90%">
+            <el-option v-for="(item, index) in workOrderStatusOptions" :key="'type_' + index" :label="item.name" :value="item.code" />
+          </el-select>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" icon="el-icon-search" @click="handleQuery">查 询</el-button>
@@ -32,7 +36,6 @@
       </el-form>
       <div style="margin-top: 5px">
         <el-button type="primary" icon="el-icon-view" size="mini" @click="handleShow">查 看</el-button>
-        <el-button type="success" icon="el-icon-plus" size="mini" @click="handleCreate">新 增</el-button>
         <el-button type="warning" icon="el-icon-edit-outline" size="mini" @click="handleUpdate">修 改</el-button>
         <el-button type="danger" icon="el-icon-delete" size="mini" @click="handleRemove">删 除</el-button>
       </div>
@@ -61,13 +64,21 @@
       >
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column type="index" width="80" label="序号" align="center" />
-        <el-table-column v-if="checkColumnDisplayed('userId', columnsData.columns)" prop="userId" label="创建用户" align="center" show-overflow-tooltip />
-        <el-table-column v-if="checkColumnDisplayed('type', columnsData.columns)" prop="type" label="工单类别" align="center" show-overflow-tooltip />
+        <el-table-column v-if="checkColumnDisplayed('username', columnsData.columns)" prop="username" label="创建用户" align="center" show-overflow-tooltip />
+        <el-table-column v-if="checkColumnDisplayed('type', columnsData.columns)" prop="type" label="工单类别" align="center" show-overflow-tooltip>
+          <template slot-scope="scope">
+            {{ getNameByCode(workOrderCategoryOptions, scope.row.type) }}
+          </template>
+        </el-table-column>
         <el-table-column v-if="checkColumnDisplayed('title', columnsData.columns)" prop="title" label="工单标题" align="center" show-overflow-tooltip />
         <el-table-column v-if="checkColumnDisplayed('content', columnsData.columns)" prop="content" label="工单内容" align="center" show-overflow-tooltip />
         <el-table-column v-if="checkColumnDisplayed('phone', columnsData.columns)" prop="phone" label="联系方式" align="center" show-overflow-tooltip />
         <el-table-column v-if="checkColumnDisplayed('email', columnsData.columns)" prop="email" label="联系邮箱" align="center" show-overflow-tooltip />
-        <el-table-column v-if="checkColumnDisplayed('status', columnsData.columns)" prop="status" label="工单状态" align="center" show-overflow-tooltip />
+        <el-table-column v-if="checkColumnDisplayed('status', columnsData.columns)" prop="status" label="工单状态" align="center" show-overflow-tooltip>
+          <template slot-scope="scope">
+            {{ getNameByCode(workOrderStatusOptions, scope.row.status) }}
+          </template>
+        </el-table-column>
         <el-table-column v-if="checkColumnDisplayed('createTime', columnsData.columns)" prop="createTime" label="创建时间" align="center" show-overflow-tooltip />
         <el-table-column v-if="checkColumnDisplayed('handleRemark', columnsData.columns)" prop="handleRemark" label="处理备注" align="center" show-overflow-tooltip />
       </el-table>
@@ -101,7 +112,7 @@ export default {
       deleteLoading: false,
       queryFormVisiable: true,
       queryForm: {
-        userId: null,
+        username: null,
         type: null,
         title: null,
         phone: null,
@@ -135,7 +146,7 @@ export default {
       columnsData: {
         visiable: false,
         columns: [
-          { key: 'userId', label: '创建用户', _showed: true },
+          { key: 'username', label: '创建用户', _showed: true },
           { key: 'type', label: '工单类别', _showed: true },
           { key: 'title', label: '工单标题', _showed: true },
           { key: 'content', label: '工单内容', _showed: true },
@@ -145,13 +156,24 @@ export default {
           { key: 'createTime', label: '创建时间', _showed: true },
           { key: 'handleRemark', label: '处理备注', _showed: true }
         ]
-      }
+      },
+      workOrderStatusOptions: [],
+      workOrderCategoryOptions: []
     }
   },
   created() {
+    this.getDict()
     this.getList()
   },
   methods: {
+    getDict() {
+      this.getDictByCode('module_work_order_status').then(res => {
+        this.workOrderStatusOptions = res.data
+      })
+      this.getDictByCode('module_work_order_category').then(res => {
+        this.workOrderCategoryOptions = res.data
+      })
+    },
     getList() {
       this.tableData.loading = true
       const queryForm = { ...this.queryForm, pageNumber: this.tableData.pageNumber, pageSize: this.tableData.pageSize }
@@ -168,15 +190,12 @@ export default {
       this.getList()
     },
     handleReset() {
-      this.queryForm.id = null
-      this.queryForm.userId = null
+      this.queryForm.username = null
       this.queryForm.type = null
       this.queryForm.title = null
-      this.queryForm.content = null
       this.queryForm.phone = null
       this.queryForm.email = null
       this.queryForm.status = null
-      this.queryForm.handleRemark = null
       this.tableData.pageNumber = 1
       this.getList()
     },
@@ -185,21 +204,16 @@ export default {
         this.$notify.warning({ title: '警告', message: '请先选择一条数据' })
         return
       }
-      this.showData.title = '查看${field.fieldRemark}'
+      this.showData.title = '查看'
       this.showData.id = this.selectData.current.id
       this.showData.visiable = true
-    },
-    handleCreate() {
-      this.editData.title = '新增${field.fieldRemark}'
-      this.editData.id = null
-      this.editData.visiable = true
     },
     handleUpdate() {
       if (!this.selectData.current) {
         this.$notify.warning({ title: '警告', message: '请先选择一条数据' })
         return
       }
-      this.editData.title = '修改${field.fieldRemark}'
+      this.editData.title = '修改'
       this.editData.id = this.selectData.current.id
       this.editData.visiable = true
     },

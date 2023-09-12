@@ -5,7 +5,7 @@
     :close-on-press-escape="false"
     :close-on-click-modal="false"
     :show-close="false"
-    width="30%"
+    width="60%"
     class="jy-dialog"
   >
     <div>
@@ -14,37 +14,64 @@
         v-loading="initloading"
         :rules="rules"
         :model="form"
-        label-width="100px"
+        label-width="130px"
         element-loading-text="加载中，请稍后..."
         element-loading-spinner="el-icon-loading"
       >
-        <el-form-item label="ID：" prop="id">
-          <el-input v-model="form.id" />
-        </el-form-item>
-        <el-form-item label="创建用户：" prop="userId">
-          <el-input v-model="form.userId" />
-        </el-form-item>
-        <el-form-item label="工单类别：" prop="type">
-          <el-input v-model="form.type" />
-        </el-form-item>
-        <el-form-item label="工单标题：" prop="title">
-          <el-input v-model="form.title" />
-        </el-form-item>
-        <el-form-item label="工单内容：" prop="content">
-          <el-input v-model="form.content" />
-        </el-form-item>
-        <el-form-item label="联系方式：" prop="phone">
-          <el-input v-model="form.phone" />
-        </el-form-item>
-        <el-form-item label="联系邮箱：" prop="email">
-          <el-input v-model="form.email" />
-        </el-form-item>
-        <el-form-item label="工单状态（待处理、已处理、不予解决）：" prop="status">
-          <el-input v-model="form.status" />
-        </el-form-item>
-        <el-form-item label="处理备注：" prop="handleRemark">
-          <el-input v-model="form.handleRemark" />
-        </el-form-item>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="创建用户：" prop="username">
+              <el-input v-model="form.username" readonly />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="工单类别：" prop="type">
+              <el-select v-model="form.type" style="width: 100%">
+                <el-option v-for="(item, index) in workOrderCategoryOptions" :key="'category_' + index" :label="item.name" :value="item.code" readonly />
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="工单标题：" prop="title">
+              <el-input v-model="form.title" readonly />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="联系方式：" prop="phone">
+              <el-input v-model="form.phone" type="phone" readonly />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="联系邮箱：" prop="email">
+              <el-input v-model="form.email" type="email" readonly />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="工单状态：" prop="status">
+              <el-select v-model="form.status" style="width: 100%">
+                <el-option v-for="(item, index) in workOrderStatusOptions" :key="'type_' + index" :label="item.name" :value="item.code" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="24">
+            <el-form-item label="工单内容：" prop="content">
+              <el-input v-model="form.content" type="textarea" maxlength="1000" :rows="5" readonly />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="24">
+            <el-form-item label="处理备注：" prop="handleRemark">
+              <el-input v-model="form.handleRemark" type="textarea" maxlength="1000" :rows="5" />
+            </el-form-item>
+          </el-col>
+        </el-row>
       </el-form>
     </div>
     <span slot="footer" class="dialog-footer">
@@ -83,6 +110,7 @@ export default {
       form: {
         id: null,
         userId: null,
+        username: null,
         type: null,
         title: null,
         content: null,
@@ -114,12 +142,14 @@ export default {
           { required: true, message: '请输入联系邮箱', trigger: 'blur' }
         ],
         status: [
-          { required: true, message: '请输入工单状态（待处理、已处理、不予解决）', trigger: 'blur' }
+          { required: true, message: '请输入工单状态', trigger: 'blur' }
         ],
         handleRemark: [
           { required: true, message: '请输入处理备注', trigger: 'blur' }
         ]
-      }
+      },
+      workOrderStatusOptions: [],
+      workOrderCategoryOptions: []
     }
   },
   watch: {
@@ -142,7 +172,18 @@ export default {
     },
     deep: true
   },
+  created() {
+    this.getDict()
+  },
   methods: {
+    getDict() {
+      this.getDictByCode('module_work_order_status').then(res => {
+        this.workOrderStatusOptions = res.data
+      })
+      this.getDictByCode('module_work_order_category').then(res => {
+        this.workOrderCategoryOptions = res.data
+      })
+    },
     async getIdempotentToken() {
       this.initloading = true
       await getIdempotentToken().then(res => {

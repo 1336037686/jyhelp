@@ -5,7 +5,7 @@
     :close-on-press-escape="false"
     :close-on-click-modal="false"
     :show-close="false"
-    width="30%"
+    width="50%"
     class="jy-dialog"
   >
     <div
@@ -16,33 +16,21 @@
       <el-descriptions :column="2" border>
         <el-descriptions-item>
           <template slot="label">
-            ID
-          </template>
-          {{ form.id }}
-        </el-descriptions-item>
-        <el-descriptions-item>
-          <template slot="label">
             创建用户
           </template>
-          {{ form.userId }}
+          {{ form.username }}
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">
             工单类别
           </template>
-          {{ form.type }}
+          {{ getNameByCode(workOrderCategoryOptions, form.type) }}
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">
             工单标题
           </template>
           {{ form.title }}
-        </el-descriptions-item>
-        <el-descriptions-item>
-          <template slot="label">
-            工单内容
-          </template>
-          {{ form.content }}
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">
@@ -58,11 +46,17 @@
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">
-            工单状态（待处理、已处理、不予解决）
+            工单状态
           </template>
-          {{ form.status }}
+          {{ getNameByCode(workOrderStatusOptions, form.type) }}
         </el-descriptions-item>
-        <el-descriptions-item>
+        <el-descriptions-item span="2">
+          <template slot="label">
+            工单内容
+          </template>
+          {{ form.content }}
+        </el-descriptions-item>
+        <el-descriptions-item span="2">
           <template slot="label">
             处理备注
           </template>
@@ -101,6 +95,7 @@ export default {
       form: {
         id: null,
         userId: null,
+        username: null,
         type: null,
         title: null,
         content: null,
@@ -108,7 +103,9 @@ export default {
         email: null,
         status: null,
         handleRemark: null
-      }
+      },
+      workOrderStatusOptions: [],
+      workOrderCategoryOptions: []
     }
   },
   watch: {
@@ -123,7 +120,18 @@ export default {
     },
     deep: true
   },
+  created() {
+    this.getDict()
+  },
   methods: {
+    getDict() {
+      this.getDictByCode('module_work_order_status').then(res => {
+        this.workOrderStatusOptions = res.data
+      })
+      this.getDictByCode('module_work_order_category').then(res => {
+        this.workOrderCategoryOptions = res.data
+      })
+    },
     getById(id) {
       this.initloading = true
       workOrderApi.getById(id).then(response => {
