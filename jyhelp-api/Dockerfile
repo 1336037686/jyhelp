@@ -9,10 +9,10 @@ RUN mkdir -p /app/logs
 WORKDIR /app
 
 # 复制应用程序 JAR 包到容器中
-COPY jyadmin-starter-1.0-SNAPSHOT.jar ./
+COPY jyadmin-starter-1.0-SNAPSHOT.jar ./app.jar
 
 # 暴露应用程序端口
-EXPOSE 8081
+EXPOSE 8080
 
 # 启动容器时执行的命令
-CMD ["java", "-jar", "jyadmin-starter-1.0-SNAPSHOT.jar"]
+CMD ["java", "-jar", "app.jar"]
