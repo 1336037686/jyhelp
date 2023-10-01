@@ -20,13 +20,9 @@
   - 📘 `jyhelp-security`：鉴权与登录注册模块
   - 📘 `jyhelp-starter`：启动器（main）
   - 📘 `jyhelp-system`：系统基础业务模块
-    
 - 📚 `jyhelp-web`：前端页面项目
-  
 - 📚 `jyhelp-app`：基于uniapp的小程序、H5、APP前端项目
-  
 - 📚 `jyhelp-doc`：开发文档
-  
 - 📚 `jyhelp-sql`：数据库脚本
 
 ## 安装
