@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.annotation.Resource;
 import javax.sql.DataSource;
+import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,10 +29,7 @@ public class RedisTest {
 
     @Test
     public void test() throws Exception {
-        String encrypt = RsaUtil.encrypt("admin123");
-        System.out.println(encrypt);
-        String decrypt = RsaUtil.decrypt(encrypt);
-        System.out.println(decrypt);
+        System.out.println(new BigDecimal(1000d / 10000).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
     }
 
 
